@@ -1,0 +1,47 @@
+func main(): void [ bool ]
+    ld.str "Hello, World!"
+    call void $System.Console.WriteLine(str)
+
+    ld.int 1
+    ld.str "TheWord"
+    call void other(int, str)
+
+    ld.int 7
+    call bool check_even(int)
+    set.loc 0
+
+    ld.loc 0
+    call void $System.Console.WriteLine(bool)
+ret
+
+func other(int, str) : void []
+    ld.arg 0
+    ld.int 1
+    add
+    ld.arg 1
+    add
+    call void $System.Console.WriteLine(str)
+
+    ld.float -.45
+    ld.float +4.45
+    add
+    call void $System.Console.WriteLine(float)
+ret
+
+func check_even(int) : bool []
+    ld.arg 0
+    ld.int 2
+    mod
+    ld.int 0
+
+    if.equ
+        ld.bool true
+        
+        throw $System.Exception()
+    if.else
+        ld.bool false
+        
+        ld.str "Not even!"
+        throw $System.InvalidOperationException(str)
+    if.end
+ret
