@@ -1,17 +1,26 @@
-func main(): void [ bool ]
+func main() : void [ bool, str ]
     ld.str "Hello, World!"
     call void $System.Console.WriteLine(str)
-
+    
     ld.int 1
     ld.str "TheWord"
     call void other(int, str)
-
-    ld.int 7
+    
+    ld.int 4646336
     call bool check_even(int)
     set.loc 0
-
+    
     ld.loc 0
     call void $System.Console.WriteLine(bool)
+    
+    ld.int 8
+    ld.str "AB"
+    ld.bool false
+    call str final(int, str, bool)
+    set.loc 1
+    
+    ld.loc 1
+    call void $System.Console.WriteLine(str)
 ret
 
 func other(int, str) : void []
@@ -21,7 +30,7 @@ func other(int, str) : void []
     ld.arg 1
     add
     call void $System.Console.WriteLine(str)
-
+    
     ld.float -.45
     ld.float +4.45
     add
@@ -33,15 +42,33 @@ func check_even(int) : bool []
     ld.int 2
     mod
     ld.int 0
-
+    
     if.equ
         ld.bool true
-        
-        throw $System.Exception()
     if.else
         ld.bool false
         
         ld.str "Not even!"
-        throw $System.InvalidOperationException(str)
+        ld.str "Argument 1"
+        throw $System.ArgumentException(str, str)
     if.end
+ret
+
+func final(int, str, bool) : str [ int, str ]
+    ld.arg 0
+    ld.int 2
+    div
+    set.loc 0
+    
+    ld.arg 2
+    ld.arg 1
+    add
+    set.loc 1
+    
+    ld.loc 1
+    ld.loc 0
+    mul
+    set.loc 1
+    
+    ld.loc 1
 ret

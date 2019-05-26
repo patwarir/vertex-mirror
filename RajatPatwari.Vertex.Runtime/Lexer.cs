@@ -33,7 +33,10 @@ namespace RajatPatwari.Vertex.Runtime
             while (_position < _code.Length)
             {
                 if (_code[_position] == '*' && _code[_position + 1] == '/')
+                {
+                    _position += 2;
                     return;
+                }
                 _position++;
             }
         }

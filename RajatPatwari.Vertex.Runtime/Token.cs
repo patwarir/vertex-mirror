@@ -92,7 +92,7 @@ namespace RajatPatwari.Vertex.Runtime.Token
             Type.ToString();
     }
 
-    public enum Datatype
+    public enum Datatype : byte
     {
         Undefined,
         Void,
