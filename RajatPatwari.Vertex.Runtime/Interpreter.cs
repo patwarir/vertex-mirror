@@ -134,14 +134,14 @@ namespace RajatPatwari.Vertex.Runtime
                 var returnString = new StringBuilder();
                 for (var index = 0; index < sl2; index++)
                     returnString.Append(sl1);
-                return returnString;
+                return returnString.ToString();
             }
             else if (value1 is long ls1 && value2 is string ls2)
             {
                 var returnString = new StringBuilder();
                 for (var index = 0; index < ls1; index++)
                     returnString.Append(ls2);
-                return returnString;
+                return returnString.ToString();
             }
 
             throw new InvalidOperationException($"Cannot {nameof(Multiply)}!");
