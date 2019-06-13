@@ -1,0 +1,216 @@
+An operation code represents a certain action that the runtime will perform.
+They are read from the stream buffer with their arguments following them.
+
+Hex Index		0x00
+Title			No Operation
+Syntax			nop
+Summary			This operation code tells the runtime to do nothing.
+Stack Change	No stack change.
+
+Hex Index		0x01
+Title			Jump Always
+Syntax			jmp IDENTIFIER
+				jmp.a IDENTIFIER
+Summary			This operation code tells the runtime to jump to the specified label.
+Stack Change	No stack change.
+
+Hex Index		0x02
+Title			Jump True
+Syntax			jmp.t IDENTIFIER
+Summary			This operation code tells the runtime to jump to the specified label if the value on top of the stack is "true".
+Stack Change	Pops the top value on the stack.
+
+Hex Index		0x03
+Title			Jump False
+Syntax			jmp.f IDENTIFIER
+Summary			This operation code tells the runtime to jump to the specified label if the value on top of the stack is "false".
+Stack Change	Pops the top value on the stack.
+
+Hex Index		0x04
+Title			Call
+Syntax			call TYPE ?$IDENTIFIER(TYPE...)
+Summary			This operation code tells the runtime to call the specified function.
+Stack Change	Pops from the stack based on the specified function's parameters and pushes based on the specified funtion's return type.
+
+Hex Index		0x05
+Title			Return
+Syntax			ret
+Summary			This operation code tells the runtime to return from the current function.
+				NOTE: The return value is handled by the "call" operation code.
+Stack Change	No stack change.
+
+Hex Index		0x06
+Title			Throw
+Syntax			throw $IDENTIFIER(TYPE...)
+Summary			This operation code tells the runtime to throw a runtime-defined exception.
+				NOTE: User-defined exceptions are currently not available.
+Stack Change	Pops from the stack based on the specified exception's parameters.
+
+Hex Index		0x07
+Title			Pop
+Syntax			pop
+Summary			This operation code tells the runtime to remove the value on top of the stack.
+Stack Change	Pops a value from the stack.
+
+Hex Index		0x08
+Title			Duplicate
+Syntax			dup
+Summary			This operation code tells the runtime to duplicate the value on top of the stack.
+Stack Change	Pops a value from the stack but pushes the same value twice.
+
+Hex Index		0x09
+Title			Load Boolean
+Syntax			ld.bl ?LITERAL
+Summary			This operation code tells the runtime to push the given boolean value to the stack.
+				NOTE: If a literal is not given, the default value, "false" will be pushed.
+Stack Change	Pushes a value to the stack.
+
+Hex Index		0x0a
+Title			Load Integer
+Syntax			ld.int ?LITERAL
+Summary			This operation code tells the runtime to push the given 64-bit integer value to the stack.
+				NOTE: If a literal is not given, the default value, "0" will be pushed.
+Stack Change	Pushes a value to the stack.
+
+Hex Index		0x0b
+Title			Load Float
+Syntax			ld.fl ?LITERAL
+Summary			This operation code tells the runtime to push the given 64-bit float value to the stack.
+				NOTE: If a literal is not given, the default value, "0.0" will be pushed.
+Stack Change	Pushes a value to the stack.
+
+Hex Index		0x0c
+Title			Load String
+Syntax			ld.str ?LITERAL
+Summary			This operation code tells the runtime to push the given string value to the stack.
+				NOTE: If a literal is not given, the default value, """"/(empty string) will be pushed.
+Stack Change	Pushes a value to the stack.
+
+Hex Index		0x0d
+Title			Load Parameter
+Syntax			ld.pr INDEX
+				ld.arg INDEX
+Summary			This operation code tells the runtime to push the value of the parameter with the specified index to the stack.
+Stack Change	Pushes a value to the stack.
+
+Hex Index		0x0e
+Title			Load Constant
+Syntax			ld.cn INDEX
+Summary			This operation code tells the runtime to push the value of the constant with the specified index to the stack.
+Stack Change	Pushes a value to the stack.
+
+Hex Index		0x0f
+Title			Load Local
+Syntax			ld.lc INDEX
+Summary			This operation code tells the runtime to push the value of the local with the specified index to the stack.
+Stack Change	Pushes a value to the stack.
+
+Hex Index		0x10
+Title			Set Parameter
+Syntax			st.pr INDEX
+				st.arg INDEX
+Summary			This operation code tells the runtime to pop the value on top of the stack and set it to the parameter specified.
+Stack Change	Pops a value from the stack.
+
+Hex Index		0x11
+Title			Set Local
+Syntax			st.lc INDEX
+Summary			This operation code tells the runtime to pop the value on top of the stack and set it to the local specified.
+Stack Change	Pops a value from the stack.
+
+Hex Index		0x12
+Title			Increment Parameter
+Syntax			inc.pr INDEX
+				inc.arg INDEX
+Summary			This operation code tells the runtime to increment the value of the parameter specified by one.
+Stack Change	No stack change.
+
+Hex Index		0x13
+Title			Increment Local
+Syntax			inc.lc INDEX
+Summary			This operation code tells the runtime to increment the value of the local specified by one.
+Stack Change	No stack change.
+
+Hex Index		0x14
+Title			Decrement Parameter
+Syntax			dec.pr INDEX
+				dec.arg INDEX
+Summary			This operation code tells the runtime to decrement the value of the parameter specified by one.
+Stack Change	No stack change.
+
+Hex Index		0x15
+Title			Decrement Local
+Syntax			dec.lc INDEX
+Summary			This operation code tells the runtime to decrement the value of the local specified by one.
+Stack Change	No stack change.
+
+Hex Index		0x16
+Title			Negate
+Syntax			neg
+Summary			This operation code tells the runtime to negate the value on top of the stack.
+Stack Change	Pops from the stack and pushes the negated value.
+
+Hex Index		0x17
+Title			Add
+Syntax			add
+Summary			This operation code tells the runtime to add the two values on top of the stack together.
+Stack Change	Pops two values from the stack and pushes the result.
+
+Hex Index		0x18
+Title			Subtract
+Syntax			sub
+Summary			This operation code tells the runtime to subtract the value below the stack by the value on top of it.
+Stack Change	Pops two values from the stack and pushes the result.
+
+Hex Index		0x19
+Title			Multiply
+Syntax			mul
+Summary			This operation code tells the runtime to multiply the two values on top of the stack together.
+Stack Change	Pops two values from the stack and pushes the result.
+
+Hex Index		0x1a
+Title			Divide
+Syntax			div
+Summary			This operation code tells the runtime to divide the value below the stack by the value on top of it.
+Stack Change	Pops two values from the stack and pushes the result.
+
+Hex Index		0x1b
+Title			Modulate
+Syntax			mod
+Summary			This operation code tells the runtime to modulate (get the division remainder of) the value below the stack by the value on top of it.
+Stack Change	Pops two values from the stack and pushes the result.
+
+Hex Index		0x1c
+Title			Check Equal
+Syntax			c.eq
+				if.eq
+Summary			This operation code tells the runtime to push true if the two values on the stack are equal by value.
+Stack Change	Pops two values from the stack and pushes the result.
+
+Hex Index		0x1d
+Title			Check Greater Than
+Syntax			c.gt
+				if.gt
+Summary			This operation code tells the runtime to push true if the value below the stack is greater than the value on the stack.
+Stack Change	Pops two values from the stack and pushes the result.
+
+Hex Index		0x1e
+Title			Check Less Than
+Syntax			c.lt
+				if.lt
+Summary			This operation code tells the runtime to push true if the value below the stack is less than the value on the stack.
+Stack Change	Pops two values from the stack and pushes the result.
+
+Hex Index		0x1f
+Title			Check Greater Than Or Equal To
+Syntax			c.ge
+				if.ge
+Summary			This operation code tells the runtime to push true if the value below the stack is greater than or equal to the value on the stack.
+Stack Change	Pops two values from the stack and pushes the result.
+
+Hex Index		0x20
+Title			Check Less Than Or Equal To
+Syntax			c.le
+				if.le
+Summary			This operation code tells the runtime to push true if the value below the stack is less than or equal to the value on the stack.
+Stack Change	Pops two values from the stack and pushes the result.

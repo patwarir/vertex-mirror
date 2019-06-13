@@ -1,0 +1,62 @@
+Comment
+Comments are ignored by the runtime and do not effect program execution.
+There are three types of comments:
+	Single-Line:
+		You can place // anywhere in your code to indicate that the rest of the line is a comment.
+
+	Multi-Line:
+		You can place /* ... */ anywhere in your code to indicate that the section is a comment.
+
+	Documentation:
+		A line started by the character # represents documentation comments for a function.
+		The various forms of documentation comments are:
+			Description
+				Follow the syntax of:
+					@desc "DESCRIPTION"
+				Represents the description of the function.
+
+			Return
+				Follow the syntax of:
+					@ret "DESCRIPTION"
+				Represents the description of the return value of the function.
+
+			Parameter
+				Follow the syntax of:
+					@param INDEX IDENTIFIER "DESCRIPTION"
+				The index indicates which parameter you are referring to.
+				The identifier allows you to name a parameter.
+				The description gives the description of the parameter.
+
+Function
+Follow the syntax of:
+	func IDENTIFIER(TYPE...) : TYPE {
+		// Constant or local blocks, labels or operation codes.
+	}
+The identifier is the name of the function.
+The various types in the parenthesis represents the types of the parameters of the function.
+The type after the colon represents the return type of the function.
+
+Constant
+A constant block will declare and initialize any constants in a function.
+Constants cannot change during the execution of a program.
+Follow the syntax of:
+	cn {
+		LITERAL...
+	}
+
+Local
+A local block will declare and initialize any locals to their default values.
+Locals are mutable and can change during the execution of a program.
+Follow the syntax of:
+	lc {
+		TYPE...
+	}
+
+Label
+A label is a position in a position where you can "jump" to.
+Follow the syntax of:
+	label IDENTIFIER:
+
+Content
+Content lines within functions can consist of constant or local blocks, labels or operation codes.
+Operation codes represent what is actually executed in the function.
