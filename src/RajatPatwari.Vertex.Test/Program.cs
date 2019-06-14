@@ -8,11 +8,11 @@ namespace RajatPatwari.Vertex.Test
     {
         public static void Main()
         {
-            /*Console.Write("Please enter a file path: ");
+            Console.Write("Please enter a file path: ");
             var path = Console.ReadLine();
-            Console.WriteLine();*/
+            Console.WriteLine();
 
-            var code = File.ReadAllText(/*path*/@"C:\Users\patwa\Desktop\Projects\vertex\samples\Full Test\main.vir");
+            var code = File.ReadAllText(path);
 
             var parser = new Parser(code);
             parser.Run();

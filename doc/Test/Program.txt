@@ -1,0 +1,5 @@
+A test program that runs the files specified by the user.
+
+Code
+public static Main() -> void
+Runs the program.

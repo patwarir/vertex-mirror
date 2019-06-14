@@ -62,10 +62,8 @@ namespace RajatPatwari.Vertex.Runtime
             bool inConstantBlock = false, inLocalBlock = false, inCommentBlock = false;
             byte constantIndex = 0, localIndex = 0;
 
-            foreach (var stuff in _code.Split(Environment.NewLine, StringSplitOptions.RemoveEmptyEntries))
+            foreach (var line in _code.Split(Environment.NewLine, StringSplitOptions.RemoveEmptyEntries))
             {
-                var line = TrimTabs(stuff);
-
                 if (line.StartsWith("/*"))
                     inCommentBlock = true;
                 else if (line.StartsWith("*/"))
