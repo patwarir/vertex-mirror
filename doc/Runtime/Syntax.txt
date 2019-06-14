@@ -55,7 +55,7 @@ Follow the syntax of:
 Label
 A label is a position in a position where you can "jump" to.
 Follow the syntax of:
-	label IDENTIFIER:
+	lb IDENTIFIER:
 
 Content
 Content lines within functions can consist of constant or local blocks, labels or operation codes.

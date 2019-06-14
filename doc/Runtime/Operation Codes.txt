@@ -41,7 +41,8 @@ Stack Change	No stack change.
 
 Hex Index		0x06
 Title			Throw
-Syntax			throw $IDENTIFIER(TYPE...)
+Syntax			trw $IDENTIFIER(TYPE...)
+				throw $IDENTIFIER(TYPE...)
 Summary			This operation code tells the runtime to throw a runtime-defined exception.
 				NOTE: User-defined exceptions are currently not available.
 Stack Change	Pops from the stack based on the specified exception's parameters.

@@ -1,0 +1,146 @@
+func main() : void {
+	/*
+		Adding block comments is fun!
+	*/
+	
+	cn {
+		"Hello, World!"
+		-10.6
+	}
+	
+	lc {
+		bl
+		str
+		int
+	}
+	
+	nop // No operation
+	
+	ld.cn 0
+	call void $System.Console.WriteLine(str)
+	
+	ld.cn 1
+	call void $System.Console.WriteLine(fl)
+	
+	call void loop_test()
+	
+	ld.int 1
+	ld.str "TheWord"
+	call void other(int, str)
+	
+	ld.int 49276
+	st.lc 2
+	
+	ld.lc 2
+	call bl check_even(int)
+	st.lc 0
+	
+	ld.lc 0
+	call void $System.Console.WriteLine(bl)
+	
+	ld.int 5
+	ld.str "AB"
+	ld.lc 0
+	call str final(int, str, bl)
+	st.lc 1
+	
+	ld.lc 1
+	call void $System.Console.WriteLine(str)
+	
+	ret
+}
+
+func loop_test() : void {
+	lc {
+		str
+	}
+	
+	ld.str "A"
+	st.lc 0
+	
+lb LOOP_START:
+	// Conditional check
+	ld.str "AAA"
+	ld.lc 0
+	c.eq
+	jmp.t LOOP_END
+	
+	// Conditional body
+	ld.str "A"
+	ld.lc 0
+	add
+	st.lc 0
+	jmp LOOP_START
+	
+lb LOOP_END:
+	ret
+}
+
+func other(int, str) : void {
+	ld.pr 0
+	ld.int 1
+	add
+	ld.pr 1
+	add
+	call void $System.Console.WriteLine(str)
+	
+	ld.fl -.45
+	ld.fl +4.45
+	add
+	call void $System.Console.WriteLine(fl)
+	
+	ret
+}
+
+func check_even(int) : bl {
+	ld.pr 0
+	ld.int 2
+	mod
+	// Note that without a specified value, ld.int loads 0 by default.
+	ld.int
+	
+	c.eq
+	jmp.t VALUE_IS_EVEN
+	
+	ld.bl false
+	// jmp CHECK_EVEN_END
+	ld.str "Not even!"
+	ld.str "First argument: int"
+	trw $System.ArgumentException(str, str)
+	
+lb VALUE_IS_EVEN:
+	ld.bl true
+	
+lb CHECK_EVEN_END:
+	ret
+}
+
+# @desc "Test, a function test."
+# @param 0 multiplier "A value divide by 2 and to multiply the string by."
+# @param 1 stringOne "The base string to multiply."
+# @param 2 boolTest "A sample boolean to add to the base string."
+# @ret "A special combination of the parameters."
+func final(int, str, bl) : str {
+	lc {
+		int
+		str
+	}
+	
+	ld.pr 0
+	ld.int 2
+	div
+	st.lc 0
+	
+	ld.pr 2
+	ld.pr 1
+	add
+	st.lc 1
+	
+	ld.lc 1
+	ld.lc 0
+	mul
+	st.lc 1
+	
+	ld.lc 1
+	ret
+}
