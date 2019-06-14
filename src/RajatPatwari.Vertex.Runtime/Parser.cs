@@ -62,15 +62,19 @@ namespace RajatPatwari.Vertex.Runtime
             bool inConstantBlock = false, inLocalBlock = false, inCommentBlock = false;
             byte constantIndex = 0, localIndex = 0;
 
-            foreach (var line in _code.Split(Environment.NewLine).Select(TrimTabs))
+            foreach (var stuff in _code.Split(Environment.NewLine, StringSplitOptions.RemoveEmptyEntries))
             {
+                var line = TrimTabs(stuff);
+
                 if (line.StartsWith("/*"))
                     inCommentBlock = true;
                 else if (line.StartsWith("*/"))
                     inCommentBlock = false;
-                if (!inCommentBlock)
+                else if (!inCommentBlock)
                 {
                     if (line.StartsWith("//"))
+                    { }
+                    else if (line == string.Empty)
                     { }
 
                     else if (line.StartsWith("func "))
@@ -133,7 +137,7 @@ namespace RajatPatwari.Vertex.Runtime
                     else if (line.StartsWith("lb "))
                         current.Labels.Add(new Label(line.Substring(3, line.Length - 4), current.Buffer.Length));
 
-                    else if (line.StartsWith("nop "))
+                    else if (line.StartsWith("nop"))
                         current.Buffer.WriteOperationCode(OperationCode.NoOperation);
 
                     else if (line.StartsWith("jmp "))
@@ -174,7 +178,7 @@ namespace RajatPatwari.Vertex.Runtime
 
                         current.Buffer.WriteDatatypes(datatypes);
                     }
-                    else if (line.StartsWith("ret "))
+                    else if (line.StartsWith("ret"))
                         current.Buffer.WriteOperationCode(OperationCode.Return);
 
                     else if (line.StartsWith("trw "))
@@ -208,9 +212,9 @@ namespace RajatPatwari.Vertex.Runtime
                         current.Buffer.WriteDatatypes(datatypes);
                     }
 
-                    else if (line.StartsWith("pop "))
+                    else if (line.StartsWith("pop"))
                         current.Buffer.WriteOperationCode(OperationCode.Pop);
-                    else if (line.StartsWith("dup "))
+                    else if (line.StartsWith("dup"))
                         current.Buffer.WriteOperationCode(OperationCode.Duplicate);
 
                     else if (line.StartsWith("ld.bl"))
@@ -327,43 +331,43 @@ namespace RajatPatwari.Vertex.Runtime
                         current.Buffer.WriteByte(byte.Parse(line.Substring(7)));
                     }
 
-                    else if (line.StartsWith("neg "))
+                    else if (line.StartsWith("neg"))
                         current.Buffer.WriteOperationCode(OperationCode.Negate);
 
-                    else if (line.StartsWith("add "))
+                    else if (line.StartsWith("add"))
                         current.Buffer.WriteOperationCode(OperationCode.Add);
-                    else if (line.StartsWith("sub "))
+                    else if (line.StartsWith("sub"))
                         current.Buffer.WriteOperationCode(OperationCode.Subtract);
-                    else if (line.StartsWith("mul "))
+                    else if (line.StartsWith("mul"))
                         current.Buffer.WriteOperationCode(OperationCode.Multiply);
-                    else if (line.StartsWith("div "))
+                    else if (line.StartsWith("div"))
                         current.Buffer.WriteOperationCode(OperationCode.Divide);
-                    else if (line.StartsWith("mod "))
+                    else if (line.StartsWith("mod"))
                         current.Buffer.WriteOperationCode(OperationCode.Modulate);
 
-                    else if (line.StartsWith("c.eq "))
+                    else if (line.StartsWith("c.eq"))
                         current.Buffer.WriteOperationCode(OperationCode.CheckEquals);
-                    else if (line.StartsWith("if.eq "))
+                    else if (line.StartsWith("if.eq"))
                         current.Buffer.WriteOperationCode(OperationCode.CheckEquals);
 
-                    else if (line.StartsWith("c.gt "))
+                    else if (line.StartsWith("c.gt"))
                         current.Buffer.WriteOperationCode(OperationCode.CheckGreater);
-                    else if (line.StartsWith("if.gt "))
+                    else if (line.StartsWith("if.gt"))
                         current.Buffer.WriteOperationCode(OperationCode.CheckGreater);
 
-                    else if (line.StartsWith("c.lt "))
+                    else if (line.StartsWith("c.lt"))
                         current.Buffer.WriteOperationCode(OperationCode.CheckLess);
-                    else if (line.StartsWith("if.lt "))
+                    else if (line.StartsWith("if.lt"))
                         current.Buffer.WriteOperationCode(OperationCode.CheckLess);
 
-                    else if (line.StartsWith("c.ge "))
+                    else if (line.StartsWith("c.ge"))
                         current.Buffer.WriteOperationCode(OperationCode.CheckGreaterEquals);
-                    else if (line.StartsWith("if.ge "))
+                    else if (line.StartsWith("if.ge"))
                         current.Buffer.WriteOperationCode(OperationCode.CheckGreaterEquals);
 
-                    else if (line.StartsWith("c.le "))
+                    else if (line.StartsWith("c.le"))
                         current.Buffer.WriteOperationCode(OperationCode.CheckLessEquals);
-                    else if (line.StartsWith("if.le "))
+                    else if (line.StartsWith("if.le"))
                         current.Buffer.WriteOperationCode(OperationCode.CheckLessEquals);
                 }
             }
