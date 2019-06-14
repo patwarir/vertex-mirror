@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 
 namespace RajatPatwari.Vertex.Runtime
 {
@@ -42,23 +43,95 @@ namespace RajatPatwari.Vertex.Runtime
         {
             if (operation == OperationCode.Add)
             {
+                if (valueOne is long l1 && valueTwo is long l2)
+                    return l1 + l2;
+                else if (valueOne is double d1 && valueTwo is double d2)
+                    return d1 + d2;
+                else if (valueOne is string s1 && valueTwo is string s2)
+                    return s1 + s2;
 
+                else if (valueOne is long ld1 && valueTwo is double ld2)
+                    return ld1 + ld2;
+                else if (valueOne is double dl1 && valueTwo is long dl2)
+                    return dl1 + dl2;
+
+                else if (valueOne is string sb1 && valueTwo is bool sb2)
+                    return sb1 + sb2;
+                else if (valueOne is bool bs1 && valueTwo is string bs2)
+                    return bs1 + bs2;
+
+                else if (valueOne is string sl1 && valueTwo is long sl2)
+                    return sl1 + sl2;
+                else if (valueOne is long ls1 && valueTwo is string ls2)
+                    return ls1 + ls2;
+
+                else if (valueOne is string sd1 && valueTwo is double sd2)
+                    return sd1 + sd2;
+                else if (valueOne is double ds1 && valueTwo is string ds2)
+                    return ds1 + ds2;
             }
             else if (operation == OperationCode.Subtract)
             {
+                if (valueOne is long l1 && valueTwo is long l2)
+                    return l1 - l2;
+                else if (valueOne is double d1 && valueTwo is double d2)
+                    return d1 - d2;
 
+                else if (valueOne is long ld1 && valueTwo is double ld2)
+                    return ld1 - ld2;
+                else if (valueOne is double dl1 && valueTwo is long dl2)
+                    return dl1 - dl2;
             }
             else if (operation == OperationCode.Multiply)
             {
+                if (valueOne is long l1 && valueTwo is long l2)
+                    return l1 * l2;
+                else if (valueOne is double d1 && valueTwo is double d2)
+                    return d1 * d2;
 
+                else if (valueOne is long ld1 && valueTwo is double ld2)
+                    return ld1 * ld2;
+                else if (valueOne is double dl1 && valueTwo is long dl2)
+                    return dl1 * dl2;
+
+                else if (valueOne is string sl1 && valueTwo is long sl2)
+                {
+                    var returnString = new StringBuilder();
+                    for (var index = 0; index < sl2; index++)
+                        returnString.Append(sl1);
+                    return returnString.ToString();
+                }
+                else if (valueOne is long ls1 && valueTwo is string ls2)
+                {
+                    var returnString = new StringBuilder();
+                    for (var index = 0; index < ls1; index++)
+                        returnString.Append(ls2);
+                    return returnString.ToString();
+                }
             }
             else if (operation == OperationCode.Divide)
             {
+                if (valueOne is long l1 && valueTwo is long l2)
+                    return l1 / l2;
+                else if (valueOne is double d1 && valueTwo is double d2)
+                    return d1 / d2;
 
+                else if (valueOne is long ld1 && valueTwo is double ld2)
+                    return ld1 / ld2;
+                else if (valueOne is double dl1 && valueTwo is long dl2)
+                    return dl1 / dl2;
             }
             else if (operation == OperationCode.Modulate)
             {
+                if (valueOne is long l1 && valueTwo is long l2)
+                    return l1 % l2;
+                else if (valueOne is double d1 && valueTwo is double d2)
+                    return d1 % d2;
 
+                else if (valueOne is long ld1 && valueTwo is double ld2)
+                    return ld1 % ld2;
+                else if (valueOne is double dl1 && valueTwo is long dl2)
+                    return dl1 % dl2;
             }
 
             throw new InvalidOperationException($"Invalid arithmetic {nameof(operation)} {operation}!");
@@ -67,24 +140,20 @@ namespace RajatPatwari.Vertex.Runtime
         private bool Conditional(OperationCode type, object valueOne, object valueTwo)
         {
             if (type == OperationCode.CheckEquals)
-            {
-
-            }
+                return EqualityComparer<object>.Default.Equals(valueOne, valueTwo);
             else if (type == OperationCode.CheckGreater)
-            {
-
-            }
+                return Comparer<object>.Default.Compare(valueOne, valueTwo) == 1;
             else if (type == OperationCode.CheckLess)
-            {
-
-            }
+                return Comparer<object>.Default.Compare(valueOne, valueTwo) == -1;
             else if (type == OperationCode.CheckGreaterEquals)
             {
-
+                var compare = Comparer<object>.Default.Compare(valueOne, valueTwo);
+                return compare == 0 || compare == 1;
             }
             else if (type == OperationCode.CheckLessEquals)
             {
-
+                var compare = Comparer<object>.Default.Compare(valueOne, valueTwo);
+                return compare == 0 || compare == -1;
             }
 
             throw new InvalidOperationException($"Invalid conditional {nameof(type)} {type}!");

@@ -1,0 +1,5 @@
+A label is a specific named place/position in the stream buffer.
+
+Code
+public Label(string, ushort) -> void
+	Creates a label with a specific name and place/position.

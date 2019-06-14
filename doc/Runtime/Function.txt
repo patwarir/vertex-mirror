@@ -1,0 +1,30 @@
+A function is a fully indivisible and separate block of code.
+It contains all of the required state and state changes for its own "sphere".
+
+Code
+public Name { get; } -> string
+	This represents the name of the function.
+
+public Return { get; } -> Datatype
+	This is the datatype of the return value of the function.
+
+public Parameters { get; } -> ScalarList
+	These are the parameter values of the function.
+
+public Constants { get; } -> ScalarList
+	These are the constant values in the function.
+
+public Locals { get; } -> ScalarList
+	These are the local values in the function.
+
+public Buffer { get; } -> Buffer
+	This represents the stream buffer of bytes that the function contains.
+
+public Stack { get; } -> Stack<object>
+	This represents the stack of values that the function currently has loaded.
+
+public Labels { get; } -> IList<Label>
+	This represents a list of all the labels contained in the function.
+
+public Function(string, Datatype) -> void
+	This creates a function with the required name and return value.
