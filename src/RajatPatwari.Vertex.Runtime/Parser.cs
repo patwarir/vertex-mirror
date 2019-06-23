@@ -68,6 +68,7 @@ namespace RajatPatwari.Vertex.Runtime
                     inCommentBlock = true;
                 else if (line.StartsWith("*/"))
                     inCommentBlock = false;
+
                 else if (!inCommentBlock)
                 {
                     if (line.StartsWith("//"))
