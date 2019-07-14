@@ -208,6 +208,9 @@ namespace RajatPatwari.Vertex.Runtime
                             Console.Read();
                         else if (name == "$System.Console.ReadLine" && @return == Datatype.String)
                             function.Stack.Push(Console.ReadLine());
+
+                        else if (name == "$System.DateTime.Now" && @return == Datatype.String)
+                            function.Stack.Push(DateTime.Now.ToString());
                     }
                     else
                     {

@@ -7,9 +7,9 @@ namespace RajatPatwari.Vertex.Runtime.VirtualMachine
 {
     public sealed class ScalarList : IEnumerable<Scalar>
     {
-        private IList<Scalar> _list = new List<Scalar>();
+        private readonly IList<Scalar> _list = new List<Scalar>();
 
-        public bool Constant { get; } = false;
+        public bool Constant { get; }
 
         public ScalarList(bool constant = false) =>
             Constant = constant;

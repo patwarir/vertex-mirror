@@ -8,7 +8,7 @@ namespace RajatPatwari.Vertex.Runtime.VirtualMachine
 {
     public sealed class Buffer : IEnumerable<byte>
     {
-        private IList<byte> _stream = new List<byte>();
+        private readonly IList<byte> _stream = new List<byte>();
 
         public ushort Length =>
             (ushort)_stream.Count;

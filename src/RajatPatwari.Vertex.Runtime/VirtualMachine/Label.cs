@@ -14,8 +14,8 @@ namespace RajatPatwari.Vertex.Runtime.VirtualMachine
             Position = position;
         }
 
-        public bool Equals(Label other) =>
-            Name == other.Name && Position == other.Position;
+        public bool Equals(Label label) =>
+            Name == label.Name && Position == label.Position;
 
         public override bool Equals(object obj) =>
             obj is Label label && Equals(label);
@@ -23,7 +23,7 @@ namespace RajatPatwari.Vertex.Runtime.VirtualMachine
         public override int GetHashCode() =>
             base.GetHashCode();
 
-        public int CompareTo(Label other) =>
-            Position.CompareTo(other.Position);
+        public int CompareTo(Label label) =>
+            Position.CompareTo(label.Position);
     }
 }
