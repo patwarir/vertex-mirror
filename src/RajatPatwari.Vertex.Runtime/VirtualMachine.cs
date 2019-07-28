@@ -39,22 +39,7 @@ namespace RajatPatwari.Vertex.Runtime.VirtualMachine
         StoreLocal,
 
         MutateParameter,
-        MutateLocal,
-
-        Add,
-        Subtract,
-        Multiply,
-        Divide,
-        Modulus,
-        Power,
-
-        CheckEqual,
-
-        CheckGreater,
-        CheckLess,
-
-        CheckGreaterEquals,
-        CheckLessEquals
+        MutateLocal
     }
 
     public enum Datatype : byte
@@ -430,7 +415,7 @@ namespace RajatPatwari.Vertex.Runtime.VirtualMachine
     {
         public string Name { get; }
 
-        public string Namespace { get; }
+        public string Package { get; }
 
         public Datatype Return { get; }
 
@@ -442,14 +427,14 @@ namespace RajatPatwari.Vertex.Runtime.VirtualMachine
 
         public Buffer Buffer { get; } = new Buffer();
 
-        public Stack<object> Stack { get; } = new Stack<object>();
+        public Stack<Scalar> Stack { get; } = new Stack<Scalar>();
 
         public IList<Label> Labels { get; } = new List<Label>();
 
-        public Function(string name, string @namespace, Datatype @return)
+        public Function(string name, string package, Datatype @return)
         {
             Name = name;
-            Namespace = @namespace;
+            Package = package;
             Return = @return;
         }
     }

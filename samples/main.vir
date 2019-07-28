@@ -1,4 +1,4 @@
-namespace rajatpatwari;
+pkg rajatpatwari;
 
 func main() -> void {
 	/*
@@ -18,10 +18,10 @@ func main() -> void {
 	nop // Line comments are fun too!
 	
 	ld.cn 0
-	call sys::io.writeln(str) -> void
+	call std_io.writeln(str) -> void
 	
 	ld.cn 1
-	call sys::io.writeln(fl.s) -> void
+	call std_io.writeln(fl.s) -> void
 	
 	call loop_test() -> lg.s
 	
@@ -36,7 +36,7 @@ func main() -> void {
 	st.lc 0
 	
 	ld.lc 0
-	call sys::io.writeln(bl) -> void
+	call std_io.writeln(bl) -> void
 	
 	ld.lt ti.s 5
 	ld.lt ch 'A'
@@ -45,7 +45,7 @@ func main() -> void {
 	st.lc 1
 	
 	ld.lc 1
-	call sys::io.writeln(str) -> void
+	call std_io.writeln(str) -> void
 	
 	ret
 }
@@ -82,12 +82,12 @@ func other(lg.s, str) -> void {
 	add
 	ld.pr 1
 	add
-	call sys::io.writeln(str) -> void
+	call std_io.writeln(str) -> void
 	
 	ld.lt fl.d -.45
 	ld.lt fl.d +4.45
 	add
-	call sys::io.writeln(fl.d) -> void
+	call std_io.writeln(fl.d) -> void
 	
 	ret
 }
@@ -102,7 +102,7 @@ func check_even(sh.u) -> bl {
 	jmp.t VALUE_IS_EVEN
 	
 	ld.lt str "Not Even!"
-	trw sys::ex.arg(str)
+	trw std_ex.arg(str)
 	
 lb VALUE_IS_EVEN:
 	ld.lt bl true

@@ -1,8 +1,29 @@
-﻿using System;
-
-namespace RajatPatwari.Vertex.Runtime.StandardLibrary
+﻿namespace RajatPatwari.Vertex.Runtime.StandardLibrary
 {
-    public static class Environment
+    public static class Temp
+    {
+        public static string[] Names { get; } =
+        {
+            "std_env.date", "std_env.time",
+
+            "std_sfn.len", "std_sfn.sub",
+            "std_sfn.rem", "std_sfn.concat",
+
+            "std_op.add", "std_op.sub", "std_op.mul",
+            "std_op.div", "std_op.mod", "std_op.pow",
+
+            "std_cmp.eq", "std_cmp.gt", "std_cmp.lt",
+            "std_cmp.ge", "std_cmp.le",
+
+            "std_io.write", "std_io.writeln",
+            "std_io.read", "std_io.readln",
+
+            "std_ex.arg", "std_ex.arg_null",
+            "std_ex.arg_range", "std_ex.inv_op"
+        };
+    }
+
+    /*public static class Environment
     {
         public static string Date() =>
             DateTime.Now.ToShortDateString();
@@ -66,5 +87,5 @@ namespace RajatPatwari.Vertex.Runtime.StandardLibrary
 
         public static System.Exception InvalidOperation(string message) =>
             new InvalidOperationException(message);
-    }
+    }*/
 }
