@@ -1,5 +1,4 @@
-﻿using RajatPatwari.Vertex.Runtime;
-using System;
+﻿using System;
 using System.IO;
 
 namespace RajatPatwari.Vertex.Test
@@ -14,11 +13,11 @@ namespace RajatPatwari.Vertex.Test
 
             var code = File.ReadAllText(path);
 
-            var parser = new Parser(code);
+            /*var parser = new Parser(code);
             parser.Run();
 
             var interpreter = new Interpreter(parser.Functions);
-            interpreter.Run();
+            interpreter.Run();*/
         }
     }
 }

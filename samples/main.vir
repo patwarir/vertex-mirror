@@ -1,0 +1,140 @@
+namespace rajatpatwari;
+
+func main() -> void {
+	/*
+		Block comments are great!
+	*/
+	
+	cn {
+		str = "Hello, World!",
+		fl.s = -10.6,
+		ch = 'b'
+	}
+	
+	lc {
+		bl, str, sh.u
+	}
+	
+	nop // Line comments are fun too!
+	
+	ld.cn 0
+	call sys::io.writeln(str) -> void
+	
+	ld.cn 1
+	call sys::io.writeln(fl.s) -> void
+	
+	call loop_test() -> lg.s
+	
+	ld.lt str "TheWord"
+	call other(lg.s, str) -> void
+	
+	ld.lt sh.u 49276
+	st.lc 2
+	
+	ld.lc 2
+	call check_even(sh.u) -> bl
+	st.lc 0
+	
+	ld.lc 0
+	call sys::io.writeln(bl) -> void
+	
+	ld.lt ti.s 5
+	ld.lt ch 'A'
+	ld.lc 0
+	call final(ti.s, ch, bl) -> str
+	st.lc 1
+	
+	ld.lc 1
+	call sys::io.writeln(str) -> void
+	
+	ret
+}
+
+func loop_test() -> lg.s {
+	lc {
+		str
+	}
+	
+	ld.lt str "A"
+	st.lc 0
+	
+lb LOOP_START:
+	// Conditional Check
+	ld.lt str "AAAA"
+	ld.lc 0
+	c.eq
+	jmp.t LOOP_END
+	
+	// Conditional Body
+	ld.lt str "A"
+	ld.lc 0
+	add
+	st.lc 0
+	jmp.a LOOP_START
+	
+lb LOOP_END:
+	ret
+}
+
+func other(lg.s, str) -> void {
+	ld.pr 0
+	ld.lt lg.s 1
+	add
+	ld.pr 1
+	add
+	call sys::io.writeln(str) -> void
+	
+	ld.lt fl.d -.45
+	ld.lt fl.d +4.45
+	add
+	call sys::io.writeln(fl.d) -> void
+	
+	ret
+}
+
+func check_even(sh.u) -> bl {
+	ld.pr 0
+	ld.lt sh.u 2
+	mod
+	
+	ld.lt sh.u 0
+	c.eq
+	jmp.t VALUE_IS_EVEN
+	
+	ld.lt str "Not Even!"
+	trw sys::ex.arg(str)
+	
+lb VALUE_IS_EVEN:
+	ld.lt bl true
+	ret
+}
+
+# @desc "Test, a final function test."
+# @param 0 "A value double to which to multiply the character by."
+# @param 1 "The base character to multiply."
+# @param 2 "A sample boolean to add to the base string by."
+# @ret "A special combination of the parameters."
+func final(ti.s, ch, bl) -> str {
+	lc {
+		sh.s, str
+	}
+	
+	ld.pr 0
+	ld.lt ti.s 2
+	div
+	cast sh.s
+	st.lc 0
+	
+	ld.pr 2
+	ld.pr 1
+	add
+	st.lc 1
+	
+	ld.lc 1
+	ld.lc 0
+	mul
+	st.lc 1
+	
+	ld.lc 1
+	ret
+}

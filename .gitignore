@@ -19,6 +19,9 @@ bld/
 # Visual Studio 2015 cache/options directory
 .vs/
 
+# Jetbrains Rider directory
+.idea/
+
 *_i.c
 *_p.c
 *_i.h
