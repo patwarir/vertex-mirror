@@ -430,6 +430,8 @@ namespace RajatPatwari.Vertex.Runtime.VirtualMachine
     {
         public string Name { get; }
 
+        public string Namespace { get; }
+
         public Datatype Return { get; }
 
         public ScalarList Parameters { get; } = new ScalarList();
@@ -444,9 +446,10 @@ namespace RajatPatwari.Vertex.Runtime.VirtualMachine
 
         public IList<Label> Labels { get; } = new List<Label>();
 
-        public Function(string name, Datatype @return)
+        public Function(string name, string @namespace, Datatype @return)
         {
             Name = name;
+            Namespace = @namespace;
             Return = @return;
         }
     }
