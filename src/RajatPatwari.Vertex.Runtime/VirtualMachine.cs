@@ -11,8 +11,6 @@ namespace RajatPatwari.Vertex.Runtime.VirtualMachine
     public enum OperationCode : byte
     {
         NoOperation,
-        Pause,
-        Exit,
 
         JumpAlways,
         JumpTrue,
@@ -36,10 +34,7 @@ namespace RajatPatwari.Vertex.Runtime.VirtualMachine
         LoadLocal,
 
         StoreParameter,
-        StoreLocal,
-
-        MutateParameter,
-        MutateLocal
+        StoreLocal
     }
 
     public enum Datatype : byte
@@ -287,6 +282,22 @@ namespace RajatPatwari.Vertex.Runtime.VirtualMachine
             return datatypes;
         }
 
+        public byte ReadIndex(ushort position) =>
+            ReadTinyUnsigned(position);
+
+        public char ReadIdentifierCharacter(ushort position) =>
+            (char)Read(position);
+
+        public string ReadIdentifier(ushort position)
+        {
+            var length = Read(position++);
+
+            var builder = new StringBuilder();
+            for (var index = position; index < position + length; index++)
+                builder.Append(ReadIdentifierCharacter(position));
+            return builder.ToString();
+        }
+
         #region Literal Reads
 
         public bool ReadBoolean(ushort position) =>
@@ -351,6 +362,18 @@ namespace RajatPatwari.Vertex.Runtime.VirtualMachine
             var datatypes = value.ToList();
             Write((byte)datatypes.Count);
             datatypes.ForEach(WriteDatatype);
+        }
+
+        public void WriteIndex(byte value) =>
+            WriteTinyUnsigned(value);
+
+        public void WriteIdentifierCharacter(char value) =>
+            Write((byte)value);
+
+        public void WriteIdentifier(string value)
+        {
+            Write((byte)value.Length);
+            value.ToList().ForEach(WriteIdentifierCharacter);
         }
 
         #region Literal Writes
@@ -426,7 +449,7 @@ namespace RajatPatwari.Vertex.Runtime.VirtualMachine
 
         public Buffer Buffer { get; } = new Buffer();
 
-        public Stack<Scalar> Stack { get; } = new Stack<Scalar>();
+        public Stack<object> Stack { get; } = new Stack<object>();
 
         public IList<Label> Labels { get; } = new List<Label>();
 

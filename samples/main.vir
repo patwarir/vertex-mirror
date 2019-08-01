@@ -1,4 +1,4 @@
-pkg rajat_patwari;
+pkg sample;
 
 func main() -> void {
 	/*
@@ -18,10 +18,10 @@ func main() -> void {
 	nop // Line comments are fun too!
 	
 	ld.cn 0
-	call std.io.writeln(str) -> void
+	call io::writeln(str) -> void
 	
 	ld.cn 1
-	call std.io.writeln(fl.s) -> void
+	call io::writeln(fl.s) -> void
 	
 	call loop_test() -> lg.s
 	pop
@@ -39,7 +39,7 @@ func main() -> void {
 	st.lc 0
 	
 	ld.lc 0
-	call std.io.writeln(bl) -> void
+	call io::writeln(bl) -> void
 	
 	ld.lt ti.s 5
 	ld.cn 2
@@ -48,7 +48,7 @@ func main() -> void {
 	st.lc 1
 	
 	ld.lc 1
-	call std.io.writeln(str) -> void
+	call io::writeln(str) -> void
 	
 	ret
 }
@@ -65,13 +65,13 @@ lb LOOP_START:
 	// Conditional Check
 	ld.lt str "AAAA"
 	ld.lc 0
-	call std.cmp.eq(str, str) -> bl
+	call cmp::eq(str, str) -> bl
 	jmp.t LOOP_END
 	
 	// Conditional Body
 	ld.lt str "A"
 	ld.lc 0
-	call std.op.add(str, str) -> str
+	call op::add(str, str) -> str
 	st.lc 0
 	jmp.a LOOP_START
 	
@@ -84,16 +84,16 @@ lb LOOP_END:
 func other(lg.s, str) -> void {
 	ld.pr 0
 	ld.lt lg.s 1
-	call std.op.add(lg.s, lg.s) -> lg.s
+	call op::add(lg.s, lg.s) -> lg.s
 	ld.pr 1
-	call std.op.add(lg.s, str) -> str
-	call std.io.writeln(str) -> void
+	call op::add(lg.s, str) -> str
+	call io::writeln(str) -> void
 	
 	ld.lt fl.d -.45
 	ld.lt fl.d +4.45
-	call std.op.add(fl.d, fl.d) -> fl.d
-	call std.io.write(fl.d) -> void
-	call std.io.writeln() -> void
+	call op::add(fl.d, fl.d) -> fl.d
+	call io::write(fl.d) -> void
+	call io::writeln() -> void
 	
 	ret
 }
@@ -101,10 +101,10 @@ func other(lg.s, str) -> void {
 func check_even(sh.u) -> bl {
 	ld.pr 0
 	ld.lt sh.u 2
-	call std.op.mod(sh.u, sh.u) -> sh.u
+	call op::mod(sh.u, sh.u) -> sh.u
 	
 	ld.lt sh.u 0
-	call std.cmp.eq(sh.u, sh.u) -> bl
+	call cmp::eq(sh.u, sh.u) -> bl
 	jmp.t VALUE_IS_EVEN
 	
 	ld.lt str "Not Even!"
@@ -117,7 +117,7 @@ lb VALUE_IS_EVEN:
 
 func inner_even_throw_arg(str) -> void {
 	ld.pr 0
-	trw std.ex.arg(str)
+	trw ex::arg(str)
 }
 
 # @desc "Test, a final function test."
@@ -132,7 +132,7 @@ func final(ti.s, ch, bl) -> str {
 	
 	ld.pr 0
 	ld.lt ti.s 2
-	call std.op.div(ti.s, ti.s) -> ti.s
+	call op::div(ti.s, ti.s) -> ti.s
 	cast sh.s
 	st.lc 0
 	
@@ -140,12 +140,12 @@ func final(ti.s, ch, bl) -> str {
 	cast str
 	ld.pr 2
 	rot
-	call std.op.add(bl, str) -> str
+	call op::add(bl, str) -> str
 	st.lc 1
 	
 	ld.lc 1
 	ld.lc 0
-	call std.op.mul(str, sh.s) -> str
+	call op::mul(str, sh.s) -> str
 	st.lc 1
 	
 	ld.lc 1

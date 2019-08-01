@@ -6,24 +6,26 @@ namespace RajatPatwari.Vertex.Runtime
     {
         public static IEnumerable<string> Names { get; } = new[]
         {
-            "std.env.date", "std.env.time",
+            "env::exit", "env::pause",
+            "env::date", "env::time",
 
-            "std.sfn.len", "std.sfn.sub", "std.sfn.rem",
+            "sfn::len", "sfn::sub", "sfn::rem",
 
-            "std.op.add", "std.op.sub", "std.op.mul",
-            "std.op.div", "std.op.mod", "std.op.pow",
+            "op::add", "op::sub", "op::mul",
+            "op::div", "op::mod", "op::pow",
 
-            "std.math.abs", "std.math.neg",
-            "std.math.max", "std.math.min",
+            "math::abs", "math::neg",
+            "math::max", "math::min",
 
-            "std.cmp.eq", "std.cmp.gt", "std.cmp.lt",
-            "std.cmp.ge", "std.cmp.le",
+            "cmp::eq", "cmp::gt", "cmp::lt",
+            "cmp::ge", "cmp::le",
 
-            "std.io.write", "std.io.writeln",
-            "std.io.read", "std.io.readln",
+            "io::write", "io::writeln",
+            "io::read", "io::readln",
+            "io::ln_str",
 
-            "std.ex.arg", "std.ex.arg_null",
-            "std.ex.arg_range", "std.ex.inv_op"
+            "ex::arg", "ex::arg_null",
+            "ex::arg_range", "ex::inv_op"
         };
     }
 }
