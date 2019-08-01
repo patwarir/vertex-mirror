@@ -220,16 +220,15 @@ namespace RajatPatwari.Vertex.Runtime.VirtualMachine
         public ScalarList(bool constant = false) =>
             Constant = constant;
 
-        public void Insert(byte index, Datatype datatype, object value) =>
-            _scalars.Insert(index, new Scalar(datatype, Scalar.Check(datatype, value)));
+        public void Add(Datatype datatype, object value) =>
+            _scalars.Add(new Scalar(datatype, value));
 
         public void Update(byte index, object value)
         {
             if (Constant)
                 throw new InvalidOperationException(nameof(Constant));
 
-            var datatype = _scalars[index].Datatype;
-            _scalars[index] = new Scalar(datatype, Scalar.Check(datatype, value));
+            _scalars[index] = new Scalar(_scalars[index].Datatype, value);
         }
 
         public object GetValue(byte index) =>

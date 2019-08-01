@@ -1,4 +1,4 @@
-pkg rajatpatwari;
+pkg rajat_patwari;
 
 func main() -> void {
 	/*
@@ -7,7 +7,7 @@ func main() -> void {
 	
 	cn {
 		str = "Hello, World!",
-		fl.s = -10.6,
+		fl.s = +.6,
 		ch = 'b'
 	}
 	
@@ -18,14 +18,17 @@ func main() -> void {
 	nop // Line comments are fun too!
 	
 	ld.cn 0
-	call std_io.writeln(str) -> void
+	call std.io.writeln(str) -> void
 	
 	ld.cn 1
-	call std_io.writeln(fl.s) -> void
+	call std.io.writeln(fl.s) -> void
 	
 	call loop_test() -> lg.s
+	pop
 	
 	ld.lt str "TheWord"
+	ld.lt lg.s -3453
+	rot
 	call other(lg.s, str) -> void
 	
 	ld.lt sh.u 49276
@@ -36,16 +39,16 @@ func main() -> void {
 	st.lc 0
 	
 	ld.lc 0
-	call std_io.writeln(bl) -> void
+	call std.io.writeln(bl) -> void
 	
 	ld.lt ti.s 5
-	ld.lt ch 'A'
+	ld.cn 2
 	ld.lc 0
 	call final(ti.s, ch, bl) -> str
 	st.lc 1
 	
 	ld.lc 1
-	call std_io.writeln(str) -> void
+	call std.io.writeln(str) -> void
 	
 	ret
 }
@@ -62,32 +65,35 @@ lb LOOP_START:
 	// Conditional Check
 	ld.lt str "AAAA"
 	ld.lc 0
-	c.eq
+	call std.cmp.eq(str, str) -> bl
 	jmp.t LOOP_END
 	
 	// Conditional Body
 	ld.lt str "A"
 	ld.lc 0
-	add
+	call std.op.add(str, str) -> str
 	st.lc 0
 	jmp.a LOOP_START
 	
 lb LOOP_END:
+	clear // Note: You don't have to do this if you know that the stack is clear.
+	ld.lt lg.s -115
 	ret
 }
 
 func other(lg.s, str) -> void {
 	ld.pr 0
 	ld.lt lg.s 1
-	add
+	call std.op.add(lg.s, lg.s) -> lg.s
 	ld.pr 1
-	add
-	call std_io.writeln(str) -> void
+	call std.op.add(lg.s, str) -> str
+	call std.io.writeln(str) -> void
 	
 	ld.lt fl.d -.45
 	ld.lt fl.d +4.45
-	add
-	call std_io.writeln(fl.d) -> void
+	call std.op.add(fl.d, fl.d) -> fl.d
+	call std.io.write(fl.d) -> void
+	call std.io.writeln() -> void
 	
 	ret
 }
@@ -95,18 +101,23 @@ func other(lg.s, str) -> void {
 func check_even(sh.u) -> bl {
 	ld.pr 0
 	ld.lt sh.u 2
-	mod
+	call std.op.mod(sh.u, sh.u) -> sh.u
 	
 	ld.lt sh.u 0
-	c.eq
+	call std.cmp.eq(sh.u, sh.u) -> bl
 	jmp.t VALUE_IS_EVEN
 	
 	ld.lt str "Not Even!"
-	trw std_ex.arg(str)
+	call inner_even_throw_arg(str) -> void
 	
 lb VALUE_IS_EVEN:
 	ld.lt bl true
 	ret
+}
+
+func inner_even_throw_arg(str) -> void {
+	ld.pr 0
+	trw std.ex.arg(str)
 }
 
 # @desc "Test, a final function test."
@@ -121,18 +132,20 @@ func final(ti.s, ch, bl) -> str {
 	
 	ld.pr 0
 	ld.lt ti.s 2
-	div
+	call std.op.div(ti.s, ti.s) -> ti.s
 	cast sh.s
 	st.lc 0
 	
-	ld.pr 2
 	ld.pr 1
-	add
+	cast str
+	ld.pr 2
+	rot
+	call std.op.add(bl, str) -> str
 	st.lc 1
 	
 	ld.lc 1
 	ld.lc 0
-	mul
+	call std.op.mul(str, sh.s) -> str
 	st.lc 1
 	
 	ld.lc 1
