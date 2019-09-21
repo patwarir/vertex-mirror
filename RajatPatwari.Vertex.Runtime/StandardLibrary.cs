@@ -96,55 +96,54 @@ namespace RajatPatwari.Vertex.Runtime
             SetupExceptions();
         }
 
-        private static (string packageName, Function function) FindBySignature(string qualifiedName, Datatype @return, IList<Datatype> parameters)
+        private static (string packageName, Function function) FindBySignature(string qualifiedName, Datatype @return, in IList<Datatype> parameters)
         {
             string packageName = qualifiedName.Remove(qualifiedName.LastIndexOf("::")),
                 functionName = qualifiedName.Substring(qualifiedName.LastIndexOf("::") + 2);
             return (packageName, packages.First(package => package.Name == packageName).FindBySignature(functionName, @return, parameters));
         }
 
-        private static bool CheckType(Type type, Datatype datatype) =>
+        private static bool CheckType(in Type type, Datatype datatype) =>
             datatype switch
             {
-                // TODO: Switch these to typeof(void), etc.
-                Datatype.Void => type.FullName == "System.Void",
+                Datatype.Void => type == typeof(void),
 
-                Datatype.Boolean => type.FullName == "System.Boolean",
+                Datatype.Boolean => type == typeof(bool),
 
-                Datatype.TinySigned => type.FullName == "System.SByte",
-                Datatype.TinyUnsigned => type.FullName == "System.Byte",
+                Datatype.TinySigned => type == typeof(sbyte),
+                Datatype.TinyUnsigned => type == typeof(byte),
 
-                Datatype.ShortSigned => type.FullName == "System.Int16",
-                Datatype.ShortUnsigned => type.FullName == "System.UInt16",
+                Datatype.ShortSigned => type == typeof(short),
+                Datatype.ShortUnsigned => type == typeof(ushort),
 
-                Datatype.MediumSigned => type.FullName == "System.Int32",
-                Datatype.MediumUnsigned => type.FullName == "System.UInt32",
+                Datatype.MediumSigned => type == typeof(int),
+                Datatype.MediumUnsigned => type == typeof(uint),
 
-                Datatype.LongSigned => type.FullName == "System.Int64",
-                Datatype.LongUnsigned => type.FullName == "System.UInt64",
+                Datatype.LongSigned => type == typeof(long),
+                Datatype.LongUnsigned => type == typeof(ulong),
 
-                Datatype.FloatSingle => type.FullName == "System.Single",
-                Datatype.FloatDouble => type.FullName == "System.Double",
+                Datatype.FloatSingle => type == typeof(float),
+                Datatype.FloatDouble => type == typeof(double),
 
-                Datatype.Character => type.FullName == "System.Char",
-                Datatype.String => type.FullName == "System.String",
+                Datatype.Character => type == typeof(char),
+                Datatype.String => type == typeof(string),
 
                 _ => false
             };
 
-        private static bool CheckParameterTypes(IEnumerable<ParameterInfo> parameterTypes, IEnumerable<Datatype> parameterDatatypes)
+        private static bool CheckParameterTypes(in IEnumerable<ParameterInfo> parameterTypes, in IEnumerable<Datatype> parameterDatatypes)
         {
             if (parameterTypes.Count() != parameterDatatypes.Count())
                 return false;
 
-            for (var i = 0; i < parameterTypes.Count(); i++)
-                if (!CheckType(parameterTypes.ElementAt(i).ParameterType, parameterDatatypes.ElementAt(i)))
+            for (var index = 0; index < parameterTypes.Count(); index++)
+                if (!CheckType(parameterTypes.ElementAt(index).ParameterType, parameterDatatypes.ElementAt(index)))
                     return false;
 
             return true;
         }
 
-        private static (bool @return, object? value) CallStandardLibraryFunction((string packageName, Function function) wrapper)
+        private static (bool @return, object? value) CallStandardLibraryFunction(in (string packageName, Function function) wrapper)
         {
             foreach (var innerClass in typeof(StandardLibraryImpl).GetNestedTypes())
                 if (innerClass.GetCustomAttribute<VertexPackageAttribute>()?.Name == wrapper.packageName)
@@ -161,7 +160,7 @@ namespace RajatPatwari.Vertex.Runtime
             throw new InvalidOperationException();
         }
 
-        public static (bool @return, object? value) FindAndCall(string qualifiedName, Datatype @return, IList<Datatype> parameters) =>
+        public static (bool @return, object? value) FindAndCall(string qualifiedName, Datatype @return, in IList<Datatype> parameters) =>
             CallStandardLibraryFunction(FindBySignature(qualifiedName, @return, parameters));
     }
 
