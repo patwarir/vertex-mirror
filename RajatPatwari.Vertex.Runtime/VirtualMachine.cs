@@ -17,7 +17,6 @@ namespace RajatPatwari.Vertex.Runtime.VirtualMachine
         JumpFalse,
 
         Call,
-        Throw,
         Return,
 
         Cast,
