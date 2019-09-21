@@ -98,8 +98,7 @@ namespace RajatPatwari.Vertex.Runtime
 
         private static (string packageName, Function function) FindBySignature(string qualifiedName, Datatype @return, in IList<Datatype> parameters)
         {
-            string packageName = qualifiedName.Remove(qualifiedName.LastIndexOf("::")),
-                functionName = qualifiedName.Substring(qualifiedName.LastIndexOf("::") + 2);
+            var (packageName, functionName) = Package.ParseQualifiedName(qualifiedName);
             return (packageName, packages.First(package => package.Name == packageName).FindBySignature(functionName, @return, parameters));
         }
 
@@ -167,7 +166,7 @@ namespace RajatPatwari.Vertex.Runtime
     #region Attributes
 
     [AttributeUsage(AttributeTargets.Class)]
-    public sealed class VertexPackageAttribute : Attribute
+    internal sealed class VertexPackageAttribute : Attribute
     {
         public string Name { get; }
 
@@ -176,7 +175,7 @@ namespace RajatPatwari.Vertex.Runtime
     }
 
     [AttributeUsage(AttributeTargets.Method)]
-    public sealed class VertexFunctionAttribute : Attribute
+    internal sealed class VertexFunctionAttribute : Attribute
     {
         public string Name { get; }
 

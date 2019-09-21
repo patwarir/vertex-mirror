@@ -354,6 +354,9 @@ namespace RajatPatwari.Vertex.Runtime.VirtualMachine
             Name = name;
             Return = @return;
         }
+
+        public Label GetLabel(string name) =>
+            Labels.First(label => label.Name == name);
     }
 
     public sealed class Package : IEnumerable<Function>
@@ -371,6 +374,9 @@ namespace RajatPatwari.Vertex.Runtime.VirtualMachine
         public Function FindBySignature(string name, Datatype @return, IList<Datatype> parameters) =>
             _functions.First(function => function.Name == name && function.Return == @return
                 && function.Parameters.GetDatatypes().SequenceEqual(parameters));
+
+        public static (string packageName, string functionName) ParseQualifiedName(string qualifiedName) =>
+            (qualifiedName.Remove(qualifiedName.LastIndexOf("::")), qualifiedName.Substring(qualifiedName.LastIndexOf("::") + 2));
 
         public IEnumerator<Function> GetEnumerator() =>
             _functions.GetEnumerator();
