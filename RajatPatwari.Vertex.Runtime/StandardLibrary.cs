@@ -25,17 +25,17 @@ namespace RajatPatwari.Vertex.Runtime
             var sfn = new Package("std.sfn");
 
             var len = new Function("len", Datatype.MediumSigned);
-            len.Parameters.Add(new Scalar(Datatype.String, string.Empty));
+            len.Parameters.Append(new Scalar(Datatype.String, string.Empty));
             sfn.Add(len);
 
             var sub = new Function("sub", Datatype.String);
-            sub.Parameters.Add(new Scalar(Datatype.String, string.Empty));
-            sub.Parameters.Add(new Scalar(Datatype.MediumSigned, default(int)));
+            sub.Parameters.Append(new Scalar(Datatype.String, string.Empty));
+            sub.Parameters.Append(new Scalar(Datatype.MediumSigned, default(int)));
             sfn.Add(sub);
 
             var rem = new Function("rem", Datatype.String);
-            rem.Parameters.Add(new Scalar(Datatype.String, string.Empty));
-            rem.Parameters.Add(new Scalar(Datatype.MediumSigned, default(int)));
+            rem.Parameters.Append(new Scalar(Datatype.String, string.Empty));
+            rem.Parameters.Append(new Scalar(Datatype.MediumSigned, default(int)));
             sfn.Add(rem);
 
             packages.Add(sfn);
@@ -64,16 +64,17 @@ namespace RajatPatwari.Vertex.Runtime
             var io = new Package("std.io")
             {
                 new Function("ln_str", Datatype.String),
+                new Function("clear", Datatype.Void),
                 new Function("read", Datatype.Void),
                 new Function("readln", Datatype.String)
             };
 
             var write = new Function("write", Datatype.Void);
-            write.Parameters.Add(new Scalar(Datatype.String, string.Empty));
+            write.Parameters.Append(new Scalar(Datatype.String, string.Empty));
             io.Add(write);
 
             var writeln = new Function("writeln", Datatype.Void);
-            writeln.Parameters.Add(new Scalar(Datatype.String, string.Empty));
+            writeln.Parameters.Append(new Scalar(Datatype.String, string.Empty));
             io.Add(writeln);
 
             packages.Add(io);
@@ -142,7 +143,7 @@ namespace RajatPatwari.Vertex.Runtime
             return true;
         }
 
-        private static (bool @return, object? value) CallStandardLibraryFunction(in (string packageName, Function function) wrapper)
+        private static (bool @return, object? value) CallStandardLibraryFunction(in (string packageName, Function function) wrapper, in ScalarList parameters)
         {
             foreach (var innerClass in typeof(StandardLibraryImpl).GetNestedTypes())
                 if (innerClass.GetCustomAttribute<VertexPackageAttribute>()?.Name == wrapper.packageName)
@@ -151,16 +152,29 @@ namespace RajatPatwari.Vertex.Runtime
                             && CheckType(method.ReturnType, wrapper.function.Return)
                             && CheckParameterTypes(method.GetParameters(), wrapper.function.Parameters.GetDatatypes()))
                         {
-                            // TODO: Return stuff from methods if possible.
-                            Console.WriteLine("Found: " + method);
-                            return (false, null);
+                            var @return = method.Invoke(null, parameters.GetValues().ToArray());
+                            if (@return != null && wrapper.function.Return != Datatype.Void)
+                                return (true, @return);
+                            else
+                                return (false, null);
                         }
 
             throw new InvalidOperationException();
         }
 
-        public static (bool @return, object? value) FindAndCall(string qualifiedName, Datatype @return, in IList<Datatype> parameters) =>
-            CallStandardLibraryFunction(FindBySignature(qualifiedName, @return, parameters));
+        public static ScalarList Flatten(in Stack<Scalar> stack, byte numberParameters)
+        {
+            var list = new ScalarList(true);
+            while (stack.Count > 0 && numberParameters > 0)
+            {
+                list.Prepend(stack.Pop());
+                numberParameters--;
+            }
+            return list;
+        }
+
+        public static (bool @return, object? value) FindAndCall(string qualifiedName, Datatype @return, in IList<Datatype> parameterDatatypes, in ScalarList parameters) =>
+            CallStandardLibraryFunction(FindBySignature(qualifiedName, @return, parameterDatatypes), parameters);
     }
 
     #region Attributes
@@ -196,7 +210,7 @@ namespace RajatPatwari.Vertex.Runtime
 
             [VertexFunction("pause")]
             public static void Pause() =>
-                Thread.Sleep(TimeSpan.MaxValue);
+                Thread.Sleep(TimeSpan.FromMilliseconds(System.Math.Pow(2, 30)));
 
             [VertexFunction("date")]
             public static string Date() =>
@@ -248,9 +262,13 @@ namespace RajatPatwari.Vertex.Runtime
             public static string LineString() =>
                 System.Environment.NewLine;
 
+            [VertexFunction("clear")]
+            public static void Clear() =>
+                Console.Clear();
+
             [VertexFunction("read")]
             public static void Read() =>
-                Console.Read();
+                Console.ReadKey();
 
             [VertexFunction("readln")]
             public static string ReadLine() =>

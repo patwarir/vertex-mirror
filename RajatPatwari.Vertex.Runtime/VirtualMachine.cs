@@ -113,8 +113,11 @@ namespace RajatPatwari.Vertex.Runtime.VirtualMachine
         public ScalarList(bool constant = false) =>
             Constant = constant;
 
-        public void Add(in Scalar value) =>
+        public void Append(in Scalar value) =>
             _scalars.Add(value);
+
+        public void Prepend(in Scalar value) =>
+            _scalars.Insert(0, value);
 
         public void Update(byte index, in Scalar value)
         {
@@ -129,6 +132,9 @@ namespace RajatPatwari.Vertex.Runtime.VirtualMachine
 
         public IEnumerable<Datatype> GetDatatypes() =>
             _scalars.Select(scalar => scalar.Datatype);
+
+        public IEnumerable<object> GetValues() =>
+            _scalars.Select(scalar => scalar.Value);
 
         public IEnumerator<Scalar> GetEnumerator() =>
             _scalars.GetEnumerator();
