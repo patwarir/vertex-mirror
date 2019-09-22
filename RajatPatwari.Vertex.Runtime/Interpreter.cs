@@ -36,17 +36,20 @@ namespace RajatPatwari.Vertex.Runtime
 
                 else if (operationCode == OperationCode.Call)
                 {
-                    var name = function.Buffer.ReadIdentifier(position);
-                    position += (ushort)(1 + name.Length);
+                    var (name, parameters, @return) = function.Buffer.ReadFunction(position);
+                    position += (ushort)(name.Length + parameters.Count() + 3);
 
-                    var parameters = function.Buffer.ReadDatatypes(position);
-                    position += (ushort)(1 + parameters.Count());
-
-                    var @return = function.Buffer.ReadDatatype(position++);
-
-                    if (name.StartsWith("std."))
-                        StandardLibrary.FindAndCall(name, @return, parameters,
+                    if (name.StartsWith("std.") && name.Contains("::"))
+                    {
+                        var stdReturn = StandardLibrary.FindAndCall(name, @return, parameters,
                             StandardLibrary.Flatten(function.Stack, (byte)parameters.Count()));
+                        if (stdReturn.@return)
+                            function.Stack.Push(stdReturn.value ?? throw new InvalidOperationException(nameof(stdReturn)));
+                    }
+                    else if (name.Contains("::"))
+                    {
+                        throw new NotImplementedException();
+                    }
                     else
                     {
                         var @new = _package.FindBySignature(name, @return, parameters);

@@ -110,6 +110,9 @@ namespace RajatPatwari.Vertex.Runtime.VirtualMachine
 
         public bool Constant { get; }
 
+        public byte Length =>
+            (byte)_scalars.Count;
+
         public ScalarList(bool constant = false) =>
             Constant = constant;
 
@@ -202,6 +205,19 @@ namespace RajatPatwari.Vertex.Runtime.VirtualMachine
             return builder.ToString();
         }
 
+        public (string name, IEnumerable<Datatype> parameters, Datatype @return) ReadFunction(ushort position)
+        {
+            var name = ReadIdentifier(position);
+            position += (ushort)(1 + name.Length);
+
+            var parameters = ReadDatatypes(position);
+            position += (ushort)(1 + parameters.Count());
+
+            var @return = ReadDatatype(position++);
+
+            return (name, parameters, @return);
+        }
+
         #region Literal Reads
 
         public bool ReadBoolean(ushort position) =>
@@ -278,6 +294,20 @@ namespace RajatPatwari.Vertex.Runtime.VirtualMachine
         {
             Write((byte)value.Length);
             value.ToList().ForEach(WriteIdentifierCharacter);
+        }
+
+        public void WriteFunction(Function value)
+        {
+            WriteIdentifier(value.Name);
+            WriteDatatypes(value.Parameters.GetDatatypes());
+            WriteDatatype(value.Return);
+        }
+
+        public void WriteFunction(string valueIdentifier, in IEnumerable<Datatype> valueParameters, Datatype valueReturn)
+        {
+            WriteIdentifier(valueIdentifier);
+            WriteDatatypes(valueParameters);
+            WriteDatatype(valueReturn);
         }
 
         #region Literal Writes

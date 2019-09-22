@@ -28,6 +28,11 @@ namespace RajatPatwari.Vertex.Runtime
             len.Parameters.Append(new Scalar(Datatype.String, string.Empty));
             sfn.Add(len);
 
+            var concat = new Function("concat", Datatype.String);
+            concat.Parameters.Append(new Scalar(Datatype.String, string.Empty));
+            concat.Parameters.Append(new Scalar(Datatype.String, string.Empty));
+            sfn.Add(concat);
+
             var sub = new Function("sub", Datatype.String);
             sub.Parameters.Append(new Scalar(Datatype.String, string.Empty));
             sub.Parameters.Append(new Scalar(Datatype.MediumSigned, default(int)));
@@ -143,7 +148,7 @@ namespace RajatPatwari.Vertex.Runtime
             return true;
         }
 
-        private static (bool @return, object? value) CallStandardLibraryFunction(in (string packageName, Function function) wrapper, in ScalarList parameters)
+        private static (bool @return, Scalar? value) CallStandardLibraryFunction(in (string packageName, Function function) wrapper, in ScalarList parameters)
         {
             foreach (var innerClass in typeof(StandardLibraryImpl).GetNestedTypes())
                 if (innerClass.GetCustomAttribute<VertexPackageAttribute>()?.Name == wrapper.packageName)
@@ -154,7 +159,7 @@ namespace RajatPatwari.Vertex.Runtime
                         {
                             var @return = method.Invoke(null, parameters.GetValues().ToArray());
                             if (@return != null && wrapper.function.Return != Datatype.Void)
-                                return (true, @return);
+                                return (true, new Scalar(wrapper.function.Return, @return));
                             else
                                 return (false, null);
                         }
@@ -173,7 +178,7 @@ namespace RajatPatwari.Vertex.Runtime
             return list;
         }
 
-        public static (bool @return, object? value) FindAndCall(string qualifiedName, Datatype @return, in IEnumerable<Datatype> parameterDatatypes, in ScalarList parameters) =>
+        public static (bool @return, Scalar? value) FindAndCall(string qualifiedName, Datatype @return, in IEnumerable<Datatype> parameterDatatypes, in ScalarList parameters) =>
             CallStandardLibraryFunction(FindBySignature(qualifiedName, @return, parameterDatatypes), parameters);
     }
 
@@ -227,6 +232,10 @@ namespace RajatPatwari.Vertex.Runtime
             [VertexFunction("len")]
             public static int Length(string str) =>
                 str.Length;
+
+            [VertexFunction("concat")]
+            public static string Concat(string str1, string str2) =>
+                str1 + str2;
 
             [VertexFunction("sub")]
             public static string Substring(string str, int start) =>
