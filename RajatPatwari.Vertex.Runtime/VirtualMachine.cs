@@ -377,7 +377,7 @@ namespace RajatPatwari.Vertex.Runtime.VirtualMachine
         public void Add(in Function function) =>
             _functions.Add(function);
 
-        public Function FindBySignature(string name, Datatype @return, IList<Datatype> parameters) =>
+        public Function FindBySignature(string name, Datatype @return, IEnumerable<Datatype> parameters) =>
             _functions.First(function => function.Name == name && function.Return == @return
                 && function.Parameters.GetDatatypes().SequenceEqual(parameters));
 

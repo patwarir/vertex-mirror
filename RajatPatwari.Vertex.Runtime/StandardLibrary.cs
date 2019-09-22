@@ -97,7 +97,7 @@ namespace RajatPatwari.Vertex.Runtime
             SetupExceptions();
         }
 
-        private static (string packageName, Function function) FindBySignature(string qualifiedName, Datatype @return, in IList<Datatype> parameters)
+        private static (string packageName, Function function) FindBySignature(string qualifiedName, Datatype @return, in IEnumerable<Datatype> parameters)
         {
             var (packageName, functionName) = Package.ParseQualifiedName(qualifiedName);
             return (packageName, packages.First(package => package.Name == packageName).FindBySignature(functionName, @return, parameters));
@@ -173,7 +173,7 @@ namespace RajatPatwari.Vertex.Runtime
             return list;
         }
 
-        public static (bool @return, object? value) FindAndCall(string qualifiedName, Datatype @return, in IList<Datatype> parameterDatatypes, in ScalarList parameters) =>
+        public static (bool @return, object? value) FindAndCall(string qualifiedName, Datatype @return, in IEnumerable<Datatype> parameterDatatypes, in ScalarList parameters) =>
             CallStandardLibraryFunction(FindBySignature(qualifiedName, @return, parameterDatatypes), parameters);
     }
 

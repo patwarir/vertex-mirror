@@ -1,6 +1,7 @@
 ﻿using RajatPatwari.Vertex.Runtime.VirtualMachine;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace RajatPatwari.Vertex.Runtime
 {
@@ -11,7 +12,7 @@ namespace RajatPatwari.Vertex.Runtime
         public Interpreter(in Package package) =>
             _package = package;
 
-        private static void RunFunction(in Function function)
+        private void RunFunction(in Function function)
         {
             ushort position = 0;
             while (position < function.Buffer.Length)
@@ -25,28 +26,50 @@ namespace RajatPatwari.Vertex.Runtime
                     position = function.GetLabel(function.Buffer.ReadIdentifier(position)).Position;
                 else if (operationCode == OperationCode.JumpTrue || operationCode == OperationCode.JumpFalse)
                 {
-                    var identifier = function.Buffer.ReadIdentifier(position);
+                    var name = function.Buffer.ReadIdentifier(position);
                     var pop = (bool)function.Stack.Pop().Value;
                     if (operationCode == OperationCode.JumpTrue && pop || operationCode == OperationCode.JumpFalse && !pop)
-                        position = function.GetLabel(identifier).Position;
+                        position = function.GetLabel(name).Position;
                     else
-                        position += (ushort)(1 + identifier.Length);
+                        position += (ushort)(1 + name.Length);
                 }
 
                 else if (operationCode == OperationCode.Call)
                 {
-                    // TODO
+                    var name = function.Buffer.ReadIdentifier(position);
+                    position += (ushort)(1 + name.Length);
+
+                    var parameters = function.Buffer.ReadDatatypes(position);
+                    position += (ushort)(1 + parameters.Count());
+
+                    var @return = function.Buffer.ReadDatatype(position++);
+
+                    if (name.StartsWith("std."))
+                        StandardLibrary.FindAndCall(name, @return, parameters,
+                            StandardLibrary.Flatten(function.Stack, (byte)parameters.Count()));
+                    else
+                    {
+                        var @new = _package.FindBySignature(name, @return, parameters);
+
+                        for (var index = 0; index < parameters.Count(); index++)
+                            @new.Parameters.Update((byte)(parameters.Count() - index - 1), function.Stack.Pop());
+
+                        RunFunction(@new);
+
+                        if (@new.Return != Datatype.Void)
+                            function.Stack.Push(@new.Stack.Pop());
+                    }
                 }
                 else if (operationCode == OperationCode.Return)
                     return;
 
                 else if (operationCode == OperationCode.Cast)
                 {
-                    // TODO
+                    throw new NotImplementedException();
                 }
                 else if (operationCode == OperationCode.CheckType)
                 {
-                    // TODO
+                    throw new NotImplementedException();
                 }
 
                 else if (operationCode == OperationCode.Pop)
