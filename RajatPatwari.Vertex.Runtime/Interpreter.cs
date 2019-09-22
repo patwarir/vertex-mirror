@@ -43,6 +43,7 @@ namespace RajatPatwari.Vertex.Runtime
                     {
                         var stdReturn = StandardLibrary.FindAndCall(name, @return, parameters,
                             StandardLibrary.Flatten(function.Stack, (byte)parameters.Count()));
+
                         if (stdReturn.@return)
                             function.Stack.Push(stdReturn.value ?? throw new InvalidOperationException(nameof(stdReturn)));
                     }
@@ -92,7 +93,64 @@ namespace RajatPatwari.Vertex.Runtime
 
                 else if (operationCode == OperationCode.LoadLiteral)
                 {
-                    // TODO
+                    var type = function.Buffer.ReadDatatype(position++);
+
+                    (object value, int offset) wrapper;
+                    switch (type)
+                    {
+                        case Datatype.Boolean:
+                            wrapper = (function.Buffer.ReadBoolean(position), 1);
+                            break;
+
+                        case Datatype.TinySigned:
+                            wrapper = (function.Buffer.ReadTinySigned(position), 1);
+                            break;
+                        case Datatype.TinyUnsigned:
+                            wrapper = (function.Buffer.ReadTinyUnsigned(position), 1);
+                            break;
+
+                        case Datatype.ShortSigned:
+                            wrapper = (function.Buffer.ReadShortSigned(position), 2);
+                            break;
+                        case Datatype.ShortUnsigned:
+                            wrapper = (function.Buffer.ReadShortUnsigned(position), 2);
+                            break;
+
+                        case Datatype.MediumSigned:
+                            wrapper = (function.Buffer.ReadMediumSigned(position), 4);
+                            break;
+                        case Datatype.MediumUnsigned:
+                            wrapper = (function.Buffer.ReadMediumUnsigned(position), 4);
+                            break;
+
+                        case Datatype.LongSigned:
+                            wrapper = (function.Buffer.ReadLongSigned(position), 8);
+                            break;
+                        case Datatype.LongUnsigned:
+                            wrapper = (function.Buffer.ReadLongUnsigned(position), 8);
+                            break;
+
+                        case Datatype.FloatSingle:
+                            wrapper = (function.Buffer.ReadFloatSingle(position), 4);
+                            break;
+                        case Datatype.FloatDouble:
+                            wrapper = (function.Buffer.ReadFloatDouble(position), 8);
+                            break;
+
+                        case Datatype.Character:
+                            wrapper = (function.Buffer.ReadCharacter(position), 2);
+                            break;
+                        case Datatype.String:
+                            var @string = function.Buffer.ReadString(position);
+                            wrapper = (@string, 1 + @string.Length * 2);
+                            break;
+
+                        default:
+                            throw new InvalidOperationException();
+                    }
+
+                    function.Stack.Push(new Scalar(type, wrapper.value));
+                    position += (ushort)wrapper.offset;
                 }
                 else if (operationCode == OperationCode.LoadParameter || operationCode == OperationCode.LoadConstant || operationCode == OperationCode.LoadLocal)
                 {

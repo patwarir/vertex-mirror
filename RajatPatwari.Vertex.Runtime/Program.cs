@@ -11,10 +11,9 @@ namespace RajatPatwari.Vertex.Runtime
 
             var main = new Function("main", Datatype.Void);
 
-            main.Constants.Append(new Scalar(Datatype.String, "Hello, World!"));
-
-            main.Buffer.WriteOperationCode(OperationCode.LoadConstant);
-            main.Buffer.WriteIndex(0);
+            main.Buffer.WriteOperationCode(OperationCode.LoadLiteral);
+            main.Buffer.WriteDatatype(Datatype.String);
+            main.Buffer.WriteString("Hello, World!");
 
             main.Buffer.WriteOperationCode(OperationCode.Call);
             main.Buffer.WriteFunction("std.io::writeln", new List<Datatype>() { Datatype.String }, Datatype.Void);

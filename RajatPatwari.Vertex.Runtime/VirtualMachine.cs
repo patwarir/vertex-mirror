@@ -296,7 +296,7 @@ namespace RajatPatwari.Vertex.Runtime.VirtualMachine
             value.ToList().ForEach(WriteIdentifierCharacter);
         }
 
-        public void WriteFunction(Function value)
+        public void WriteFunction(in Function value)
         {
             WriteIdentifier(value.Name);
             WriteDatatypes(value.Parameters.GetDatatypes());
