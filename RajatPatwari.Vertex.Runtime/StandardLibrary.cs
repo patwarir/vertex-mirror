@@ -93,8 +93,20 @@ namespace RajatPatwari.Vertex.Runtime
 
         private static void SetupExceptions()
         {
-            packages.Add(new Package("std.ex"));
-            // TODO
+            var ex = new Package("std.ex")
+            {
+                new Function("inv_op", Datatype.Void)
+            };
+
+            var arg = new Function("arg", Datatype.Void);
+            arg.Parameters.Append(new Scalar(Datatype.String, string.Empty));
+            ex.Add(arg);
+
+            var arg_range = new Function("arg_range", Datatype.Void);
+            arg_range.Parameters.Append(new Scalar(Datatype.String, string.Empty));
+            ex.Add(arg_range);
+
+            packages.Add(ex);
         }
 
         static StandardLibrary()
@@ -308,7 +320,17 @@ namespace RajatPatwari.Vertex.Runtime
         [VertexPackage("std.ex")]
         public static class Exceptions
         {
-            // TODO
+            [VertexFunction("inv_op")]
+            public static void InvalidOperation() =>
+                throw new InvalidOperationException();
+
+            [VertexFunction("arg")]
+            public static void Argument(string str) =>
+                throw new ArgumentException(str);
+
+            [VertexFunction("arg_range")]
+            public static void ArgumentRange(string str) =>
+                throw new ArgumentOutOfRangeException(str);
         }
     }
 }
