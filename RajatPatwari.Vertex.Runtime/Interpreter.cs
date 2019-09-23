@@ -67,15 +67,6 @@ namespace RajatPatwari.Vertex.Runtime
                 else if (operationCode == OperationCode.Return)
                     return;
 
-                else if (operationCode == OperationCode.Cast)
-                {
-                    throw new NotImplementedException();
-                }
-                else if (operationCode == OperationCode.CheckType)
-                {
-                    throw new NotImplementedException();
-                }
-
                 else if (operationCode == OperationCode.Pop)
                     function.Stack.Pop();
                 else if (operationCode == OperationCode.Clear)

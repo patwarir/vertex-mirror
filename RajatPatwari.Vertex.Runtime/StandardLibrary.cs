@@ -64,6 +64,12 @@ namespace RajatPatwari.Vertex.Runtime
             // TODO
         }
 
+        private static void SetupCasts()
+        {
+            packages.Add(new Package("std.cast"));
+            // TODO
+        }
+
         private static void SetupInputOutput()
         {
             var io = new Package("std.io")
@@ -98,6 +104,7 @@ namespace RajatPatwari.Vertex.Runtime
             SetupOperations();
             SetupMath();
             SetupComparisons();
+            SetupCasts();
             SetupInputOutput();
             SetupExceptions();
         }
@@ -260,6 +267,12 @@ namespace RajatPatwari.Vertex.Runtime
 
         [VertexPackage("std.cmp")]
         public static class Comparisons
+        {
+            // TODO
+        }
+
+        [VertexPackage("std.cast")]
+        public static class Casts
         {
             // TODO
         }

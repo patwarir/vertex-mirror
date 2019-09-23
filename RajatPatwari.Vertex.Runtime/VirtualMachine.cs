@@ -19,9 +19,6 @@ namespace RajatPatwari.Vertex.Runtime.VirtualMachine
         Call,
         Return,
 
-        Cast,
-        CheckType,
-
         Pop,
         Clear,
         Duplicate,
