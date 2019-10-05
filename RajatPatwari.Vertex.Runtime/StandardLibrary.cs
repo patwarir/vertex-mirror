@@ -1,336 +1,272 @@
 ﻿using RajatPatwari.Vertex.Runtime.VirtualMachine;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
-using System.Threading;
 
-namespace RajatPatwari.Vertex.Runtime
+namespace RajatPatwari.Vertex.Runtime.StandardLibrary
 {
-    public static class StandardLibrary
-    {
-        private static readonly IList<Package> packages = new List<Package>();
-
-        private static void SetupEnvironment() =>
-            packages.Add(new Package("std.env")
-            {
-                new Function("exit", Datatype.Void),
-                new Function("pause", Datatype.Void),
-                new Function("date", Datatype.String),
-                new Function("time", Datatype.String)
-            });
-
-        private static void SetupStringFunctions()
-        {
-            var sfn = new Package("std.sfn");
-
-            var len = new Function("len", Datatype.MediumSigned);
-            len.Parameters.Append(new Scalar(Datatype.String, string.Empty));
-            sfn.Add(len);
-
-            var concat = new Function("concat", Datatype.String);
-            concat.Parameters.Append(new Scalar(Datatype.String, string.Empty));
-            concat.Parameters.Append(new Scalar(Datatype.String, string.Empty));
-            sfn.Add(concat);
-
-            var sub = new Function("sub", Datatype.String);
-            sub.Parameters.Append(new Scalar(Datatype.String, string.Empty));
-            sub.Parameters.Append(new Scalar(Datatype.MediumSigned, default(int)));
-            sfn.Add(sub);
-
-            var rem = new Function("rem", Datatype.String);
-            rem.Parameters.Append(new Scalar(Datatype.String, string.Empty));
-            rem.Parameters.Append(new Scalar(Datatype.MediumSigned, default(int)));
-            sfn.Add(rem);
-
-            packages.Add(sfn);
-        }
-
-        private static void SetupOperations()
-        {
-            packages.Add(new Package("std.op"));
-            // TODO
-        }
-
-        private static void SetupMath()
-        {
-            packages.Add(new Package("std.math"));
-            // TODO
-        }
-
-        private static void SetupComparisons()
-        {
-            packages.Add(new Package("std.cmp"));
-            // TODO
-        }
-
-        private static void SetupCasts()
-        {
-            packages.Add(new Package("std.cast"));
-            // TODO
-        }
-
-        private static void SetupInputOutput()
-        {
-            var io = new Package("std.io")
-            {
-                new Function("ln_str", Datatype.String),
-                new Function("clear", Datatype.Void),
-                new Function("read", Datatype.Void),
-                new Function("readln", Datatype.String)
-            };
-
-            var write = new Function("write", Datatype.Void);
-            write.Parameters.Append(new Scalar(Datatype.String, string.Empty));
-            io.Add(write);
-
-            var writeln = new Function("writeln", Datatype.Void);
-            writeln.Parameters.Append(new Scalar(Datatype.String, string.Empty));
-            io.Add(writeln);
-
-            packages.Add(io);
-        }
-
-        private static void SetupExceptions()
-        {
-            var ex = new Package("std.ex")
-            {
-                new Function("inv_op", Datatype.Void)
-            };
-
-            var arg = new Function("arg", Datatype.Void);
-            arg.Parameters.Append(new Scalar(Datatype.String, string.Empty));
-            ex.Add(arg);
-
-            var arg_range = new Function("arg_range", Datatype.Void);
-            arg_range.Parameters.Append(new Scalar(Datatype.String, string.Empty));
-            ex.Add(arg_range);
-
-            packages.Add(ex);
-        }
-
-        static StandardLibrary()
-        {
-            SetupEnvironment();
-            SetupStringFunctions();
-            SetupOperations();
-            SetupMath();
-            SetupComparisons();
-            SetupCasts();
-            SetupInputOutput();
-            SetupExceptions();
-        }
-
-        private static (string packageName, Function function) FindBySignature(string qualifiedName, Datatype @return, in IEnumerable<Datatype> parameters)
-        {
-            var (packageName, functionName) = Package.ParseQualifiedName(qualifiedName);
-            return (packageName, packages.First(package => package.Name == packageName).FindBySignature(functionName, @return, parameters));
-        }
-
-        private static bool CheckType(in Type type, Datatype datatype) =>
-            datatype switch
-            {
-                Datatype.Void => type == typeof(void),
-
-                Datatype.Boolean => type == typeof(bool),
-
-                Datatype.TinySigned => type == typeof(sbyte),
-                Datatype.TinyUnsigned => type == typeof(byte),
-
-                Datatype.ShortSigned => type == typeof(short),
-                Datatype.ShortUnsigned => type == typeof(ushort),
-
-                Datatype.MediumSigned => type == typeof(int),
-                Datatype.MediumUnsigned => type == typeof(uint),
-
-                Datatype.LongSigned => type == typeof(long),
-                Datatype.LongUnsigned => type == typeof(ulong),
-
-                Datatype.FloatSingle => type == typeof(float),
-                Datatype.FloatDouble => type == typeof(double),
-
-                Datatype.Character => type == typeof(char),
-                Datatype.String => type == typeof(string),
-
-                _ => false
-            };
-
-        private static bool CheckParameterTypes(in IEnumerable<ParameterInfo> parameterTypes, in IEnumerable<Datatype> parameterDatatypes)
-        {
-            if (parameterTypes.Count() != parameterDatatypes.Count())
-                return false;
-
-            for (var index = 0; index < parameterTypes.Count(); index++)
-                if (!CheckType(parameterTypes.ElementAt(index).ParameterType, parameterDatatypes.ElementAt(index)))
-                    return false;
-
-            return true;
-        }
-
-        private static (bool @return, Scalar? value) CallStandardLibraryFunction(in (string packageName, Function function) wrapper, in ScalarList parameters)
-        {
-            foreach (var innerClass in typeof(StandardLibraryImpl).GetNestedTypes())
-                if (innerClass.GetCustomAttribute<VertexPackageAttribute>()?.Name == wrapper.packageName)
-                    foreach (var method in innerClass.GetMethods())
-                        if (method.GetCustomAttribute<VertexFunctionAttribute>()?.Name == wrapper.function.Name
-                            && CheckType(method.ReturnType, wrapper.function.Return)
-                            && CheckParameterTypes(method.GetParameters(), wrapper.function.Parameters.GetDatatypes()))
-                        {
-                            var @return = method.Invoke(null, parameters.GetValues().ToArray());
-                            if (@return != null && wrapper.function.Return != Datatype.Void)
-                                return (true, new Scalar(wrapper.function.Return, @return));
-                            else
-                                return (false, null);
-                        }
-
-            throw new InvalidOperationException();
-        }
-
-        public static ScalarList Flatten(in Stack<Scalar> stack, byte numberParameters)
-        {
-            var list = new ScalarList(true);
-            while (stack.Count > 0 && numberParameters > 0)
-            {
-                list.Prepend(stack.Pop());
-                numberParameters--;
-            }
-            return list;
-        }
-
-        public static (bool @return, Scalar? value) FindAndCall(string qualifiedName, Datatype @return, in IEnumerable<Datatype> parameterDatatypes, in ScalarList parameters) =>
-            CallStandardLibraryFunction(FindBySignature(qualifiedName, @return, parameterDatatypes), parameters);
-    }
-
-    #region Attributes
-
-    [AttributeUsage(AttributeTargets.Class)]
-    internal sealed class VertexPackageAttribute : Attribute
-    {
-        public string Name { get; }
-
-        public VertexPackageAttribute(string name) =>
-            Name = name;
-    }
-
     [AttributeUsage(AttributeTargets.Method)]
-    internal sealed class VertexFunctionAttribute : Attribute
+    internal sealed class VertexStandardLibraryFunctionAttribute : Attribute
     {
-        public string Name { get; }
+        public FunctionDeclaration Declaration { get; }
 
-        public VertexFunctionAttribute(string name) =>
-            Name = name;
+        public VertexStandardLibraryFunctionAttribute(string qualifiedName, Datatype @return, params Datatype[] parameters) =>
+            Declaration = new FunctionDeclaration(qualifiedName, @return, parameters);
     }
 
-    #endregion
-
-    internal static class StandardLibraryImpl
+    internal static class StandardLibraryCaller
     {
-        [VertexPackage("std.env")]
-        public static class Environment
+        private static readonly IList<(FunctionDeclaration declaration, MethodInfo implementation)> functions;
+
+        static StandardLibraryCaller()
         {
-            [VertexFunction("exit")]
-            public static void Exit() =>
-                System.Environment.Exit(0);
-
-            [VertexFunction("pause")]
-            public static void Pause() =>
-                Thread.Sleep(TimeSpan.FromMilliseconds(System.Math.Pow(2, 30)));
-
-            [VertexFunction("date")]
-            public static string Date() =>
-                DateTime.Now.ToShortDateString();
-
-            [VertexFunction("time")]
-            public static string Time() =>
-                DateTime.Now.ToLongTimeString();
+            functions = new List<(FunctionDeclaration declaration, MethodInfo implementation)>();
+            foreach (var method in typeof(StandardLibraryImplementation).GetMethods(BindingFlags.Static | BindingFlags.Public))
+            {
+                var stdAttribute = method.GetCustomAttribute<VertexStandardLibraryFunctionAttribute>()
+                    ?? throw new InvalidOperationException(nameof(VertexStandardLibraryFunctionAttribute));
+                functions.Add((stdAttribute.Declaration, method));
+            }
         }
 
-        [VertexPackage("std.sfn")]
-        public static class StringFunctions
+        public static (bool returns, object? value) CallFunction(FunctionDeclaration declaration, params object[] parameterValues)
         {
-            [VertexFunction("len")]
-            public static int Length(string str) =>
-                str.Length;
+            foreach (var function in functions)
+                if (function.declaration.Equals(declaration))
+                {
+                    var @return = function.implementation.Invoke(null, parameterValues);
+                    if (function.declaration.Return != Datatype.Void && @return != null)
+                        return (true, @return);
+                    else
+                        return (false, null);
+                }
 
-            [VertexFunction("concat")]
-            public static string Concat(string str1, string str2) =>
-                str1 + str2;
-
-            [VertexFunction("sub")]
-            public static string Substring(string str, int start) =>
-                str.Substring(start);
-
-            [VertexFunction("rem")]
-            public static string Remove(string str, int start) =>
-                str.Remove(start);
+            throw new InvalidOperationException(nameof(declaration));
         }
+    }
 
-        [VertexPackage("std.op")]
-        public static class Operations
-        {
-            // TODO
-        }
+    internal static class StandardLibraryImplementation
+    {
+        #region Environment
 
-        [VertexPackage("std.math")]
-        public static class Math
-        {
-            // TODO
-        }
+        [VertexStandardLibraryFunction("std.env::exit", Datatype.Void)]
+        public static void Exit() =>
+            Environment.Exit(0);
 
-        [VertexPackage("std.cmp")]
-        public static class Comparisons
-        {
-            // TODO
-        }
+        [VertexStandardLibraryFunction("std.env::date", Datatype.String)]
+        public static string Date() =>
+            DateTime.Now.ToShortDateString();
 
-        [VertexPackage("std.cast")]
-        public static class Casts
-        {
-            // TODO
-        }
+        [VertexStandardLibraryFunction("std.env::time", Datatype.String)]
+        public static string Time() =>
+            DateTime.Now.ToLongTimeString();
 
-        [VertexPackage("std.io")]
-        public static class InputOutput
-        {
-            [VertexFunction("ln_str")]
-            public static string LineString() =>
-                System.Environment.NewLine;
+        #endregion
 
-            [VertexFunction("clear")]
-            public static void Clear() =>
-                Console.Clear();
+        #region Cast
 
-            [VertexFunction("read")]
-            public static void Read() =>
-                Console.ReadKey();
+        [VertexStandardLibraryFunction("std.cst::to_bl", Datatype.Boolean, Datatype.Integer)]
+        public static bool ToBool(long value) =>
+            value switch
+            {
+                0L => false,
+                1L => true,
+                _ => throw new ArgumentException(nameof(value))
+            };
 
-            [VertexFunction("readln")]
-            public static string ReadLine() =>
-                Console.ReadLine();
+        [VertexStandardLibraryFunction("std.cst::to_bl", Datatype.Boolean, Datatype.String)]
+        public static bool ToBool(string value) =>
+            value switch
+            {
+                "false" => false,
+                "true" => true,
+                _ => throw new ArgumentException(nameof(value))
+            };
 
-            [VertexFunction("write")]
-            public static void Write(string str) =>
-                Console.Write(str);
+        [VertexStandardLibraryFunction("std.cst::to_int", Datatype.Integer, Datatype.Boolean)]
+        public static long ToInt(bool value) =>
+            value switch
+            {
+                false => 0L,
+                true => 1L
+            };
 
-            [VertexFunction("writeln")]
-            public static void WriteLine(string str) =>
-                Console.WriteLine(str);
-        }
+        [VertexStandardLibraryFunction("std.cst::to_int", Datatype.Integer, Datatype.Float)]
+        public static long ToInt(double value) =>
+            (long)value;
 
-        [VertexPackage("std.ex")]
-        public static class Exceptions
-        {
-            [VertexFunction("inv_op")]
-            public static void InvalidOperation() =>
-                throw new InvalidOperationException();
+        [VertexStandardLibraryFunction("std.cst::to_int", Datatype.Integer, Datatype.String)]
+        public static long ToInt(string value) =>
+            Convert.ToInt64(value);
 
-            [VertexFunction("arg")]
-            public static void Argument(string str) =>
-                throw new ArgumentException(str);
+        [VertexStandardLibraryFunction("std.cst::to_fl", Datatype.Float, Datatype.Integer)]
+        public static double ToFloat(long value) =>
+            value;
 
-            [VertexFunction("arg_range")]
-            public static void ArgumentRange(string str) =>
-                throw new ArgumentOutOfRangeException(str);
-        }
+        [VertexStandardLibraryFunction("std.cst::to_fl", Datatype.Float, Datatype.String)]
+        public static double ToFloat(string value) =>
+            Convert.ToDouble(value);
+
+        [VertexStandardLibraryFunction("std.cst::to_str", Datatype.String, Datatype.Boolean)]
+        public static string ToStr(bool value) =>
+            value switch
+            {
+                false => "false",
+                true => "true"
+            };
+
+        [VertexStandardLibraryFunction("std.cst::to_str", Datatype.String, Datatype.Integer)]
+        public static string ToStr(long value) =>
+            value.ToString();
+
+        [VertexStandardLibraryFunction("std.cst::to_str", Datatype.String, Datatype.Float)]
+        public static string ToStr(double value) =>
+            value.ToString();
+
+        #endregion
+
+        #region Operation
+
+        // TODO
+
+        #endregion
+
+        #region Comparsion
+
+        [VertexStandardLibraryFunction("std.cmp::eq", Datatype.Boolean, Datatype.Boolean, Datatype.Boolean)]
+        public static bool Equal(bool value1, bool value2) =>
+            value1 == value2;
+
+        [VertexStandardLibraryFunction("std.cmp::eq", Datatype.Boolean, Datatype.Integer, Datatype.Integer)]
+        public static bool Equal(long value1, long value2) =>
+            value1 == value2;
+
+        [VertexStandardLibraryFunction("std.cmp::eq", Datatype.Boolean, Datatype.Float, Datatype.Float)]
+        public static bool Equal(double value1, double value2) =>
+            value1 == value2;
+
+        [VertexStandardLibraryFunction("std.cmp::eq", Datatype.Boolean, Datatype.String, Datatype.String)]
+        public static bool Equal(string value1, string value2) =>
+            value1 == value2;
+
+        [VertexStandardLibraryFunction("std.cmp::gt", Datatype.Boolean, Datatype.Integer, Datatype.Integer)]
+        public static bool Greater(long value1, long value2) =>
+            value1 > value2;
+
+        [VertexStandardLibraryFunction("std.cmp::gt", Datatype.Boolean, Datatype.Float, Datatype.Float)]
+        public static bool Greater(double value1, double value2) =>
+            value1 > value2;
+
+        [VertexStandardLibraryFunction("std.cmp::lt", Datatype.Boolean, Datatype.Integer, Datatype.Integer)]
+        public static bool Less(long value1, long value2) =>
+            value1 < value2;
+
+        [VertexStandardLibraryFunction("std.cmp::lt", Datatype.Boolean, Datatype.Float, Datatype.Float)]
+        public static bool Less(double value1, double value2) =>
+            value1 < value2;
+
+        [VertexStandardLibraryFunction("std.cmp::ge", Datatype.Boolean, Datatype.Integer, Datatype.Integer)]
+        public static bool GreaterEquals(long value1, long value2) =>
+            value1 >= value2;
+
+        [VertexStandardLibraryFunction("std.cmp::ge", Datatype.Boolean, Datatype.Float, Datatype.Float)]
+        public static bool GreaterEquals(double value1, double value2) =>
+            value1 >= value2;
+
+        [VertexStandardLibraryFunction("std.cmp::le", Datatype.Boolean, Datatype.Integer, Datatype.Integer)]
+        public static bool LessEquals(long value1, long value2) =>
+            value1 <= value2;
+
+        [VertexStandardLibraryFunction("std.cmp::le", Datatype.Boolean, Datatype.Float, Datatype.Float)]
+        public static bool LessEquals(double value1, double value2) =>
+            value1 <= value2;
+
+        #endregion
+
+        #region String Functions
+
+        [VertexStandardLibraryFunction("std.sfn::len", Datatype.Integer, Datatype.String)]
+        public static long Length(string value) =>
+            value.Length;
+
+        [VertexStandardLibraryFunction("std.sfn::char", Datatype.String, Datatype.String, Datatype.Integer)]
+        public static string Char(string value1, long value2) =>
+            value1[(int)value2].ToString();
+
+        [VertexStandardLibraryFunction("std.sfn::concat", Datatype.String, Datatype.String, Datatype.String)]
+        public static string Concat(string value1, string value2) =>
+            value1 + value2;
+
+        [VertexStandardLibraryFunction("std.sfn::sub", Datatype.String, Datatype.String, Datatype.Integer)]
+        public static string Substring(string value1, long value2) =>
+            value1.Substring((int)value2);
+
+        [VertexStandardLibraryFunction("std.sfn::sub", Datatype.String, Datatype.String, Datatype.Integer, Datatype.Integer)]
+        public static string Substring(string value1, long value2, long value3) =>
+            value1.Substring((int)value2, (int)value3);
+
+        [VertexStandardLibraryFunction("std.sfn::rem", Datatype.String, Datatype.String, Datatype.Integer)]
+        public static string Remove(string value1, long value2) =>
+            value1.Remove((int)value2);
+
+        [VertexStandardLibraryFunction("std.sfn::rem", Datatype.String, Datatype.String, Datatype.Integer, Datatype.Integer)]
+        public static string Remove(string value1, long value2, long value3) =>
+            value1.Remove((int)value2, (int)value3);
+
+        #endregion
+
+        #region Math
+
+        // TODO
+
+        #endregion
+
+        #region Error
+
+        [VertexStandardLibraryFunction("std.err::inv_op", Datatype.Void)]
+        public static void InvalidOperation() =>
+            throw new InvalidOperationException();
+
+        [VertexStandardLibraryFunction("std.err::inv_op", Datatype.Void, Datatype.String)]
+        public static void InvalidOperation(string value) =>
+            throw new InvalidOperationException(value);
+
+        [VertexStandardLibraryFunction("std.err::arg", Datatype.Void, Datatype.String)]
+        public static void Argument(string value) =>
+            throw new ArgumentException(value);
+
+        [VertexStandardLibraryFunction("std.err::arg_range", Datatype.Void, Datatype.String)]
+        public static void ArgumentRange(string value) =>
+            throw new ArgumentOutOfRangeException(value);
+
+        #endregion
+
+        #region System IO
+
+        [VertexStandardLibraryFunction("std.sio::ln_str", Datatype.String)]
+        public static string LineString() =>
+            Environment.NewLine;
+
+        [VertexStandardLibraryFunction("std.sio::clear", Datatype.Void)]
+        public static void Clear() =>
+            Console.Clear();
+
+        [VertexStandardLibraryFunction("std.sio::read", Datatype.Void)]
+        public static void Read() =>
+            Console.ReadKey();
+
+        [VertexStandardLibraryFunction("std.sio::readln", Datatype.String)]
+        public static string ReadLine() =>
+            Console.ReadLine();
+
+        [VertexStandardLibraryFunction("std.sio::write", Datatype.Void, Datatype.String)]
+        public static void Write(string value) =>
+            Console.Write(value);
+
+        [VertexStandardLibraryFunction("std.sio::writeln", Datatype.Void, Datatype.String)]
+        public static void WriteLine(string value) =>
+            Console.WriteLine(value);
+
+        #endregion
     }
 }

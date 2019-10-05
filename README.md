@@ -6,4 +6,4 @@ __Framework:__ .NET Core 3
 
 __Author:__ Rajat Patwari
 
-__License__: BSD 3-Clause
+__License:__ BSD 3-Clause
