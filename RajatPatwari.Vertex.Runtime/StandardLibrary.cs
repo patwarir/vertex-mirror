@@ -1,6 +1,7 @@
 ﻿using RajatPatwari.Vertex.Runtime.VirtualMachine;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Reflection;
 
 namespace RajatPatwari.Vertex.Runtime.StandardLibrary
@@ -29,14 +30,14 @@ namespace RajatPatwari.Vertex.Runtime.StandardLibrary
             }
         }
 
-        public static (bool returns, object? value) CallFunction(FunctionDeclaration declaration, params object[] parameterValues)
+        public static (bool @return, (Datatype datatype, object value)? value) CallFunction(in FunctionDeclaration declaration, params object[] parameterValues)
         {
             foreach (var function in functions)
                 if (function.declaration.Equals(declaration))
                 {
                     var @return = function.implementation.Invoke(null, parameterValues);
                     if (function.declaration.Return != Datatype.Void && @return != null)
-                        return (true, @return);
+                        return (true, (declaration.Return, @return));
                     else
                         return (false, null);
                 }
@@ -266,6 +267,18 @@ namespace RajatPatwari.Vertex.Runtime.StandardLibrary
         [VertexStandardLibraryFunction("std.sio::writeln", Datatype.Void, Datatype.String)]
         public static void WriteLine(string value) =>
             Console.WriteLine(value);
+
+        #endregion
+
+        #region File IO
+
+        [VertexStandardLibraryFunction("std.fio::read_file", Datatype.String, Datatype.String)]
+        public static string ReadFile(string value) =>
+            File.ReadAllText(value);
+
+        [VertexStandardLibraryFunction("std.fio::write_file", Datatype.Void, Datatype.String, Datatype.String)]
+        public static void WriteFile(string value1, string value2) =>
+            File.AppendAllText(value1, value2);
 
         #endregion
     }
