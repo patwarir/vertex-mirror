@@ -117,8 +117,8 @@ namespace RajatPatwari.Vertex.Runtime
                 ("pwb", (Func<double, double, double>)((value1, value2) => Math.Pow(value1, value2))),
                 ("rtb", (Func<long, long, double>)((value1, value2) => Math.Pow(value1, 1.0 / value2))),
                 ("rtb", (Func<double, double, double>)((value1, value2) => Math.Pow(value1, 1.0 / value2))),
-                ("lgb", (Func<long, long, double>)((value1, value2) => Math.Log(value2, value1))),
-                ("lgb", (Func<double, double, double>)((value1, value2) => Math.Log(value2, value1)))
+                ("lgb", (Func<long, long, double>)((value1, value2) => Math.Log(value1, value2))),
+                ("lgb", (Func<double, double, double>)((value1, value2) => Math.Log(value1, value2)))
             });
 
             AddStdPkg("cmp", new (string, Delegate)[]

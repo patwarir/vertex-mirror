@@ -232,8 +232,6 @@ namespace RajatPatwari.Vertex.Runtime.VirtualMachine
     {
         private Scalar _return;
 
-        private ScalarCollection _parameters = new ScalarCollection(false);
-
         private Buffer _buffer;
 
         private ScalarCollection _constants, _locals;
@@ -256,8 +254,7 @@ namespace RajatPatwari.Vertex.Runtime.VirtualMachine
             set => _return = value ?? throw new ArgumentNullException(nameof(value));
         }
 
-        public ScalarCollection Parameters =>
-            _parameters;
+        public ScalarCollection Parameters { get; } = new ScalarCollection(false);
 
         public Buffer Buffer
         {
@@ -364,13 +361,13 @@ namespace RajatPatwari.Vertex.Runtime.VirtualMachine
                 throw new InvalidOperationException($"{nameof(Return)}.{nameof(Return.IsDefined)}");
             if (values == null)
                 throw new ArgumentNullException(nameof(values));
-            if (values.Length != _parameters.Count)
+            if (values.Length != Parameters.Count)
                 throw new ArgumentException($"{nameof(values)}.{nameof(values.Length)}");
 
-            for (var i = 0; i < _parameters.Count; i++)
-                _parameters.DefineAt(i, values[i] ?? throw new ArgumentNullException(nameof(values)));
+            for (var i = 0; i < Parameters.Count; i++)
+                Parameters.DefineAt(i, values[i] ?? throw new ArgumentNullException(nameof(values)));
 
-            var parameters = _parameters.GetValues().ToArray();
+            var parameters = Parameters.GetValues().ToArray();
             if (Return.Datatype != Datatype.Void)
                 Return.DefineValue(_delegate.DynamicInvoke(parameters));
             else
@@ -380,8 +377,7 @@ namespace RajatPatwari.Vertex.Runtime.VirtualMachine
         internal (bool returns, object value) RunRuntime(params object[] values)
         {
             InnerRunRuntime(values);
-
-            _parameters.Undefine();
+            Parameters.Undefine();
 
             if (!Return.IsDefined)
                 return (false, null);
@@ -394,7 +390,7 @@ namespace RajatPatwari.Vertex.Runtime.VirtualMachine
         }
 
         public override string ToString() =>
-            $"{Name}({string.Join(',', _parameters.GetDatatypes().Select(datatype => datatype.ToString()))}) -> {Return.Datatype}";
+            $"{Name}({string.Join(',', Parameters.GetDatatypes().Select(datatype => datatype.ToString()))}) -> {Return.Datatype}";
     }
 
     public sealed class Package
