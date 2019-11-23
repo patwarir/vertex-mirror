@@ -35,14 +35,14 @@ namespace RajatPatwari.Vertex.Runtime.VirtualMachine
         public bool IsDefined =>
             _isDefined && _value != null;
 
-        public Scalar(Datatype datatype)
+        private Scalar(Datatype datatype)
         {
             _value = null;
             Datatype = datatype;
             _isDefined = false;
         }
 
-        public Scalar(object value)
+        private Scalar(object value)
         {
             _value = value ?? throw new ArgumentNullException(nameof(value));
             Datatype = value switch
@@ -97,6 +97,9 @@ namespace RajatPatwari.Vertex.Runtime.VirtualMachine
 
         public static implicit operator Scalar(string value) =>
             new Scalar(value ?? throw new ArgumentNullException(nameof(value)));
+
+        public static implicit operator Scalar(Datatype value) =>
+            new Scalar(value);
     }
 
     public sealed class ScalarCollection : IEnumerable<Scalar>
@@ -164,7 +167,6 @@ namespace RajatPatwari.Vertex.Runtime.VirtualMachine
 
         JumpAlways,
         JumpTrue,
-        JumpFalse,
 
         Call,
         Return,
@@ -242,6 +244,8 @@ namespace RajatPatwari.Vertex.Runtime.VirtualMachine
 
         private Delegate _delegate;
 
+        public static readonly IEnumerable<Datatype> NoParameters = Enumerable.Empty<Datatype>();
+
         public string Name { get; }
 
         internal bool IsRuntime { get; }
@@ -262,22 +266,6 @@ namespace RajatPatwari.Vertex.Runtime.VirtualMachine
                 if (IsRuntime || _delegate != null)
                     throw new InvalidOperationException(nameof(IsRuntime));
                 return _buffer ?? throw new InvalidOperationException(nameof(Buffer));
-            }
-            set
-            {
-                if (IsRuntime || _delegate != null)
-                    throw new InvalidOperationException(nameof(IsRuntime));
-
-                if (_constants == null)
-                    _constants = new ScalarCollection(true);
-                if (_locals == null)
-                    _locals = new ScalarCollection(false);
-                if (_stack == null)
-                    _stack = new Stack<Scalar>();
-                if (_labels == null)
-                    _labels = new List<Label>();
-
-                _buffer = value ?? throw new ArgumentNullException(nameof(value));
             }
         }
 
@@ -328,7 +316,7 @@ namespace RajatPatwari.Vertex.Runtime.VirtualMachine
                 if (!IsRuntime || _buffer != null || _constants != null
                     || _locals != null || _stack != null || _labels != null)
                     throw new InvalidOperationException($"!{nameof(IsRuntime)}");
-                return _delegate;
+                return _delegate ?? throw new InvalidOperationException(nameof(Delegate));
             }
             set
             {
@@ -346,8 +334,25 @@ namespace RajatPatwari.Vertex.Runtime.VirtualMachine
         }
 
         public Function(string name)
-            : this(name, false)
-        { }
+            : this(name, false) =>
+            SetNewBuffer();
+
+        private void SetNewBuffer()
+        {
+            if (IsRuntime || _delegate != null)
+                throw new InvalidOperationException(nameof(IsRuntime));
+
+            if (_constants == null)
+                _constants = new ScalarCollection(true);
+            if (_locals == null)
+                _locals = new ScalarCollection(false);
+            if (_stack == null)
+                _stack = new Stack<Scalar>();
+            if (_labels == null)
+                _labels = new List<Label>();
+
+            _buffer = new Buffer();
+        }
 
         private void InnerRunRuntime(params object[] values)
         {
@@ -431,9 +436,12 @@ namespace RajatPatwari.Vertex.Runtime.VirtualMachine
         public Function FindBySignature(string name, Datatype @return, IEnumerable<Datatype> parameters) =>
             FindBySignature(name, false, @return, parameters);
 
-        public static (string package, string function) SplitQualifiedname(string qualifiedName) =>
-            (qualifiedName.Remove(qualifiedName.IndexOf(':')),
-                qualifiedName.Substring(qualifiedName.LastIndexOf(':') + 1));
+        public static (string package, string function) SplitQualifiedName(string qualifiedName)
+        {
+            if (qualifiedName == null)
+                throw new ArgumentNullException(nameof(qualifiedName));
+            return (qualifiedName.Remove(qualifiedName.IndexOf(':')), qualifiedName.Substring(qualifiedName.LastIndexOf(':') + 1));
+        }
 
         public override string ToString() =>
             $"{Name}|{Functions.Count}";
