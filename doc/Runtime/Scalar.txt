@@ -1,0 +1,8 @@
+A Scalar represents a value with its associated datatype in the stream buffer.
+They are indexed in functions and can be constant.
+
+Code
+public Scalar(Datatype, object) -> void ~ ArgumentException
+	The constructor for the Scalar structure takens in a Datatype and a value of any type.
+	The constructor checks if the value matches the specified datatype.
+	If the value does not match, the constructor throws an ArgumentException.
