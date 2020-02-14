@@ -1,8 +1,0 @@
-IDENTIFIER	Any valid name; includes any alphanumeric with periods and underscores allowed but the beginning character has to be alphabetic.
-TYPE		Any valid datatype; includes void (void, absence of a value), bl (boolean, 1-bit, true/false value), int (integer, 64-bit signed, whole number), fl (float, 64-bit signed, floating-point number)
-				and str (string, a variable length of characters, non-nullable). Void is restricted when not a return type.
-LITERAL		Any valid literal value of a boolean, 64-bit integer, 64-bit float or a string.
-INDEX		Any positive integer starting at 0 to 255.
-$			Represents that the following identifier is a runtime-defined identifier.
-?			Represents that the next character/token is optional.
-...			Represents the allowance of multiple or no types.
