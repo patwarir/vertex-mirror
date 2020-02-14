@@ -19,9 +19,9 @@ namespace RajatPatwari.Vertex.Runtime.VirtualMachine
         private Delegate? _delegate;
 
         public static readonly IEnumerable<Datatype> NoParameters = Enumerable.Empty<Datatype>();
-        
+
         public string Name { get; }
-        
+
         internal bool IsRuntime { get; }
 
         public Scalar Return
@@ -29,16 +29,16 @@ namespace RajatPatwari.Vertex.Runtime.VirtualMachine
             get => _return;
             internal set => _return = value ?? throw new ArgumentNullException(nameof(value));
         }
-        
+
         public ScalarCollection Parameters { get; } = new ScalarCollection(false);
-        
+
         public Buffer Buffer
         {
             get
             {
                 if (IsRuntime || _delegate != null)
                     throw new InvalidOperationException(nameof(IsRuntime));
-                
+
                 return _buffer ?? throw new InvalidOperationException(nameof(Buffer));
             }
         }
@@ -49,7 +49,7 @@ namespace RajatPatwari.Vertex.Runtime.VirtualMachine
             {
                 if (IsRuntime || _delegate != null)
                     throw new InvalidOperationException(nameof(IsRuntime));
-                
+
                 return _constants ?? throw new InvalidOperationException(nameof(Constants));
             }
         }
@@ -60,7 +60,7 @@ namespace RajatPatwari.Vertex.Runtime.VirtualMachine
             {
                 if (IsRuntime || _delegate != null)
                     throw new InvalidOperationException(nameof(IsRuntime));
-                
+
                 return _locals ?? throw new InvalidOperationException(nameof(Locals));
             }
         }
@@ -71,7 +71,7 @@ namespace RajatPatwari.Vertex.Runtime.VirtualMachine
             {
                 if (IsRuntime || _delegate != null)
                     throw new InvalidOperationException(nameof(IsRuntime));
-                
+
                 return _stack ?? throw new InvalidOperationException(nameof(Stack));
             }
         }
@@ -82,7 +82,7 @@ namespace RajatPatwari.Vertex.Runtime.VirtualMachine
             {
                 if (IsRuntime || _delegate != null)
                     throw new InvalidOperationException(nameof(IsRuntime));
-                
+
                 return _labels ?? throw new InvalidOperationException(nameof(Labels));
             }
         }
@@ -94,7 +94,7 @@ namespace RajatPatwari.Vertex.Runtime.VirtualMachine
                 if (!IsRuntime || _buffer != null || _constants != null || _locals != null || _stack != null
                     || _labels != null)
                     throw new InvalidOperationException($"!{nameof(IsRuntime)}");
-                
+
                 return _delegate ?? throw new InvalidOperationException(nameof(Delegate));
             }
             set
@@ -102,7 +102,7 @@ namespace RajatPatwari.Vertex.Runtime.VirtualMachine
                 if (!IsRuntime || _buffer != null || _constants != null || _locals != null || _stack != null
                     || _labels != null)
                     throw new InvalidOperationException($"!{nameof(IsRuntime)}");
-                
+
                 _delegate = value ?? throw new ArgumentNullException(nameof(value));
             }
         }
@@ -130,7 +130,7 @@ namespace RajatPatwari.Vertex.Runtime.VirtualMachine
 
             _buffer = new Buffer();
         }
-        
+
         internal static (string package, string function) SplitQualifiedName(string qualifiedName)
         {
             if (qualifiedName == null)
@@ -157,7 +157,7 @@ namespace RajatPatwari.Vertex.Runtime.VirtualMachine
                 throw new ArgumentNullException(nameof(name));
             if (@delegate == null)
                 throw new ArgumentNullException(nameof(@delegate));
-            
+
             var function = new Function(name, true)
             {
                 Return = (Scalar)GetDatatypeFromType(@delegate.Method.ReturnType), Delegate = @delegate
@@ -191,14 +191,17 @@ namespace RajatPatwari.Vertex.Runtime.VirtualMachine
                 Return.DefineValue(_delegate.DynamicInvoke(parameters));
             else
                 _delegate.DynamicInvoke(parameters);
-            
+
             Parameters.UndefineAll();
 
             if (!Return.IsDefined)
                 return (false, null);
-            var @return = Return.Value;
-            Return.Undefine();
-            return (true, @return);
+            else
+            {
+                var @return = Return.Value;
+                Return.Undefine();
+                return (true, @return);
+            }
         }
 
         public override string ToString() =>

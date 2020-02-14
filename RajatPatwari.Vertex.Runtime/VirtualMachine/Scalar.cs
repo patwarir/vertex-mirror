@@ -5,7 +5,7 @@ namespace RajatPatwari.Vertex.Runtime.VirtualMachine
     public sealed class Scalar
     {
         private bool _isDefined;
-        
+
         private object? _value;
 
         public bool IsDefined =>
@@ -13,7 +13,7 @@ namespace RajatPatwari.Vertex.Runtime.VirtualMachine
 
         public object Value =>
             IsDefined ? _value : throw new InvalidOperationException($"!{nameof(IsDefined)}");
-        
+
         public Datatype Datatype { get; }
 
         private Scalar(Datatype datatype)
@@ -66,7 +66,7 @@ namespace RajatPatwari.Vertex.Runtime.VirtualMachine
 
         public override string ToString() =>
             $"T:{Datatype}|D:{IsDefined}|V:{_value ?? "[NULL]"}";
-        
+
         public static explicit operator Scalar(Datatype datatype) =>
             new Scalar(datatype);
 

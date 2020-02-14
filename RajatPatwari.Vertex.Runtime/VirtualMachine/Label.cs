@@ -3,7 +3,7 @@
     public sealed class Label
     {
         public string Name { get; }
-        
+
         public int Position { get; }
 
         public Label(string name, int position)

@@ -8,10 +8,10 @@ namespace RajatPatwari.Vertex.Runtime.VirtualMachine
     public sealed class ScalarCollection : IEnumerable<Scalar>
     {
         private readonly IList<Scalar> _scalars = new List<Scalar>();
-        
+
         public int Count =>
             _scalars.Count;
-        
+
         public bool IsConstant { get; }
 
         public ScalarCollection(bool isConstant) =>
@@ -30,7 +30,7 @@ namespace RajatPatwari.Vertex.Runtime.VirtualMachine
         {
             if (IsConstant)
                 throw new InvalidOperationException(nameof(IsConstant));
-            
+
             _scalars[index] = value ?? throw new ArgumentNullException(nameof(value));
         }
 
@@ -38,7 +38,7 @@ namespace RajatPatwari.Vertex.Runtime.VirtualMachine
         {
             if (IsConstant)
                 throw new InvalidOperationException(nameof(IsConstant));
-            
+
             _scalars[index].DefineValue(value ?? throw new ArgumentNullException(nameof(value)));
         }
 

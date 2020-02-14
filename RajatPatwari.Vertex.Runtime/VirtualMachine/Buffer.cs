@@ -15,7 +15,7 @@ namespace RajatPatwari.Vertex.Runtime.VirtualMachine
 
         public void Write(byte value) =>
             _buffer.Add(value);
-        
+
         // TODO: Finish all the reads and writes.
 
         public override string ToString() =>
