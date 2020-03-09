@@ -11,12 +11,10 @@ namespace RajatPatwari.Vertex.Runtime
 
         static StandardLibrary()
         {
-            if (packages == null)
-                throw new InvalidOperationException(nameof(packages));
-
             packages.Add(Package.MakeRuntimePackage("env", new (string, Delegate)[]
             {
                 ("exit", (Action)(() => Environment.Exit(0))),
+                ("pass", (Action)(() => { })),
                 ("date", (Func<string>)DateTime.Now.ToShortDateString),
                 ("time", (Func<string>)DateTime.Now.ToLongTimeString)
             }));
@@ -25,34 +23,23 @@ namespace RajatPatwari.Vertex.Runtime
             {
                 ("to_bl", (Func<long, bool>)(value => value switch
                 {
-                    0L => false,
-                    1L => true,
+                    0L => false, 1L => true,
                     _ => throw new ArgumentException(nameof(value))
                 })),
                 ("to_bl", (Func<double, bool>)(value => value switch
                 {
-                    0.0 => false,
-                    1.0 => true,
+                    0.0 => false, 1.0 => true,
                     _ => throw new ArgumentException(nameof(value))
                 })),
                 ("to_bl", (Func<string, bool>)(value => value switch
                 {
-                    "false" => false,
-                    "true" => true,
+                    "false" => false, "true" => true,
                     _ => throw new ArgumentException(nameof(value))
                 })),
-                ("to_int", (Func<bool, long>)(value => value switch
-                {
-                    false => 0L,
-                    true => 1L
-                })),
+                ("to_int", (Func<bool, long>)(value => value switch { false => 0L, true => 1L })),
                 ("to_int", (Func<double, long>)(value => (long)value)),
                 ("to_int", (Func<string, long>)long.Parse),
-                ("to_fl", (Func<bool, double>)(value => value switch
-                {
-                    false => 0.0,
-                    true => 1.0
-                })),
+                ("to_fl", (Func<bool, double>)(value => value switch { false => 0.0, true => 1.0 })),
                 ("to_fl", (Func<long, double>)(value => value)),
                 ("to_fl", (Func<string, double>)double.Parse),
                 ("to_str", (Func<bool, string>)(value => value.ToString().ToLower())),
@@ -65,8 +52,7 @@ namespace RajatPatwari.Vertex.Runtime
                 ("neg", (Func<bool, bool>)(value => !value)),
                 ("neg", (Func<long, long>)(value => -value)),
                 ("neg", (Func<double, double>)(value => -value)),
-                ("to_dec", (Func<string, long>)(value =>
-                    long.Parse(value, System.Globalization.NumberStyles.HexNumber))),
+                ("to_dec", (Func<string, long>)(value => long.Parse(value, System.Globalization.NumberStyles.HexNumber))),
                 ("to_hex", (Func<long, string>)(value => value.ToString("X"))),
                 ("add", (Func<long, long, long>)((value1, value2) => value1 + value2)),
                 ("add", (Func<double, double, double>)((value1, value2) => value1 + value2)),
@@ -110,11 +96,9 @@ namespace RajatPatwari.Vertex.Runtime
                 ("cat", (Func<string, string, string>)string.Concat),
                 ("rep", (Func<string, long, string>)((value, times) => new string(value[0], (int)times))),
                 ("sub", (Func<string, long, string>)((value, index) => value.Substring((int)index))),
-                ("sub", (Func<string, long, long, string>)((value, index, length) =>
-                    value.Substring((int)index, (int)length))),
+                ("sub", (Func<string, long, long, string>)((value, index, length) => value.Substring((int)index, (int)length))),
                 ("rem", (Func<string, long, string>)((value, index) => value.Remove((int)index))),
-                ("rem", (Func<string, long, long, string>)((value, index, length) =>
-                    value.Remove((int)index, (int)length)))
+                ("rem", (Func<string, long, long, string>)((value, index, length) => value.Remove((int)index, (int)length)))
             }));
 
             packages.Add(Package.MakeRuntimePackage("math", new (string, Delegate)[]
@@ -150,7 +134,7 @@ namespace RajatPatwari.Vertex.Runtime
                 ("exists", (Func<string, bool>)File.Exists),
                 ("dir_exists", (Func<string, bool>)Directory.Exists),
                 ("path", (Func<string, string>)Path.GetFullPath),
-                ("dir_path", (Func<string, string>)Path.GetDirectoryName),
+                ("dir_path", (Func<string, string>)(path => Path.GetDirectoryName(path) ?? throw new InvalidOperationException(nameof(path)))),
                 ("make", (Action<string>)(value => File.Create(value))),
                 ("make_dir", (Action<string>)(value => Directory.CreateDirectory(value))),
                 ("delete", (Action<string>)File.Delete),
@@ -158,8 +142,7 @@ namespace RajatPatwari.Vertex.Runtime
             }));
         }
 
-        internal static Function FindBySignature(string package, string function, Datatype @return,
-            IEnumerable<Datatype> parameters)
+        internal static Function? FindBySignature(string package, string function, Datatype @return, IEnumerable<Datatype> parameters)
         {
             foreach (var stdPackage in packages)
                 if (stdPackage.IsRuntime && stdPackage.Name == package)
@@ -167,17 +150,15 @@ namespace RajatPatwari.Vertex.Runtime
             return null;
         }
 
-        internal static Function FindBySignature(string qualifiedName, Datatype @return,
-            IEnumerable<Datatype> parameters)
+        internal static Function? FindBySignature(string qualifiedName, Datatype @return, IEnumerable<Datatype> parameters)
         {
             var (package, function) = Function.SplitQualifiedName(qualifiedName);
             return FindBySignature(package, function, @return, parameters);
         }
 
-        public static (bool returns, object? value) Execute(string qualifiedName, Datatype @return,
-            IEnumerable<Datatype> parameters, params object?[] values) =>
+        public static (bool returns, object? value) Execute(string qualifiedName, Datatype @return, IEnumerable<Datatype> parameters, params object?[] values) =>
             FindBySignature(qualifiedName ?? throw new ArgumentNullException(nameof(qualifiedName)), @return,
-                    parameters ?? throw new ArgumentNullException(nameof(parameters)))
-                .RunRuntime(values ?? throw new ArgumentNullException(nameof(values)));
+                parameters ?? throw new ArgumentNullException(nameof(parameters)))?.RunRuntime(values ?? throw new ArgumentNullException(nameof(values)))
+                ?? throw new InvalidOperationException(nameof(qualifiedName));
     }
 }
