@@ -70,8 +70,8 @@ namespace RajatPatwari.Vertex.Runtime.VirtualMachine
 
         public void Undefine()
         {
-            if (!IsDefined)
-                throw new InvalidOperationException($"!{nameof(IsDefined)}");
+            /*if (!IsDefined)
+                throw new InvalidOperationException($"!{nameof(IsDefined)}");*/
 
             _isDefined = false;
             _value = null;
@@ -189,7 +189,7 @@ namespace RajatPatwari.Vertex.Runtime.VirtualMachine
     {
         private readonly IList<byte> _buffer = new List<byte>();
 
-        public int Count =>
+        public int Length =>
             _buffer.Count;
 
         public byte Read(int position) =>
@@ -203,7 +203,7 @@ namespace RajatPatwari.Vertex.Runtime.VirtualMachine
             var length = Read(position++);
 
             var datatypes = new List<Datatype>();
-            for (var index = 0; index < position + length; index++)
+            for (var index = position; index < position + length; index++)
                 datatypes.Add(ReadDatatype(index));
             return datatypes;
         }
@@ -241,8 +241,8 @@ namespace RajatPatwari.Vertex.Runtime.VirtualMachine
             var length = Read(position++);
 
             var builder = new StringBuilder();
-            for (var index = 0; index < position + length; index++)
-                builder.Append((char)Read(position));
+            for (var index = position; index < position + length; index++)
+                builder.Append((char)Read(index));
             return builder.ToString();
         }
 
@@ -268,6 +268,13 @@ namespace RajatPatwari.Vertex.Runtime.VirtualMachine
             WriteDatatype(function.Return.Datatype);
         }
 
+        public void WriteFunction(string name, IEnumerable<Datatype> parameters, Datatype @return)
+        {
+            WriteString(name);
+            WriteDatatypes(parameters);
+            WriteDatatype(@return);
+        }
+
         public void WriteBoolean(bool value) =>
             BitConverter.GetBytes(value).ToList().ForEach(Write);
 
@@ -284,7 +291,7 @@ namespace RajatPatwari.Vertex.Runtime.VirtualMachine
         }
 
         public override string ToString() =>
-            $"Count = {Count}";
+            $"Length = {Length}";
 
         public IEnumerator<byte> GetEnumerator() =>
             _buffer.GetEnumerator();
@@ -293,7 +300,7 @@ namespace RajatPatwari.Vertex.Runtime.VirtualMachine
             _buffer.GetEnumerator();
     }
 
-    public sealed class Label
+    public readonly struct Label
     {
         public string Name { get; }
 
@@ -315,9 +322,11 @@ namespace RajatPatwari.Vertex.Runtime.VirtualMachine
 
         private readonly Buffer? _buffer;
 
-        private readonly ScalarCollection? _constants, _locals;
+        private readonly ScalarCollection? _constants;
 
-        private readonly Stack<Scalar>? _stack;
+        private ScalarCollection? _locals;
+
+        private Stack<Scalar>? _stack;
 
         private readonly IList<Label>? _labels;
 
@@ -432,12 +441,34 @@ namespace RajatPatwari.Vertex.Runtime.VirtualMachine
             _labels = new List<Label>();
         }
 
-        internal static (string package, string function) SplitQualifiedName(string qualifiedName)
+        public static (string package, string function) SplitQualifiedName(string qualifiedName)
         {
             if (qualifiedName == null)
                 throw new ArgumentNullException(nameof(qualifiedName));
 
             return (qualifiedName.Remove(qualifiedName.IndexOf(':')), qualifiedName.Substring(qualifiedName.IndexOf(':') + 1));
+        }
+
+        public static object[] Flatten(Stack<Scalar> stack, int numberParameters)
+        {
+            var list = new List<object>();
+            while (stack.Count > 0 && numberParameters > 0)
+            {
+                list.Insert(0, stack.Pop().Value);
+                numberParameters--;
+            }
+            return list.ToArray();
+        }
+
+        public int GetLabelPosition(string labelName) =>
+            Labels.Single(label => label.Name == labelName).Position;
+
+        public void Reset()
+        {
+            _return.Undefine();
+            Parameters.UndefineAll();
+            _locals = new ScalarCollection(false);
+            _stack = new Stack<Scalar>();
         }
 
         internal static Datatype GetDatatypeFromType(Type type) =>
@@ -464,7 +495,7 @@ namespace RajatPatwari.Vertex.Runtime.VirtualMachine
             return function;
         }
 
-        internal (bool returns, object? value) RunRuntime(params object?[] values)
+        internal (bool returns, object? value) RunRuntime(object?[] values)
         {
             if (!IsRuntime)
                 throw new InvalidOperationException($"!{nameof(IsRuntime)}");

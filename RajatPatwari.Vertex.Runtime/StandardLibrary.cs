@@ -19,7 +19,7 @@ namespace RajatPatwari.Vertex.Runtime
                 ("time", (Func<string>)DateTime.Now.ToLongTimeString)
             }));
 
-            packages.Add(Package.MakeRuntimePackage("cast", new (string, Delegate)[]
+            packages.Add(Package.MakeRuntimePackage("cst", new (string, Delegate)[]
             {
                 ("to_bl", (Func<long, bool>)(value => value switch
                 {
@@ -101,7 +101,7 @@ namespace RajatPatwari.Vertex.Runtime
                 ("rem", (Func<string, long, long, string>)((value, index, length) => value.Remove((int)index, (int)length)))
             }));
 
-            packages.Add(Package.MakeRuntimePackage("math", new (string, Delegate)[]
+            packages.Add(Package.MakeRuntimePackage("mth", new (string, Delegate)[]
             {
                 // TODO: Add in the functions for the math package.
             }));
@@ -114,7 +114,7 @@ namespace RajatPatwari.Vertex.Runtime
                 ("arg_range", (Action<string>)(value => throw new ArgumentOutOfRangeException(value)))
             }));
 
-            packages.Add(Package.MakeRuntimePackage("io", new (string, Delegate)[]
+            packages.Add(Package.MakeRuntimePackage("sio", new (string, Delegate)[]
             {
                 ("ln_str", (Func<string>)(() => Environment.NewLine)),
                 ("clear", (Action)Console.Clear),
@@ -124,7 +124,7 @@ namespace RajatPatwari.Vertex.Runtime
                 ("writeln", (Action<string>)Console.WriteLine)
             }));
 
-            packages.Add(Package.MakeRuntimePackage("file", new (string, Delegate)[]
+            packages.Add(Package.MakeRuntimePackage("fio", new (string, Delegate)[]
             {
                 ("read", (Func<string, string>)File.ReadAllText),
                 ("write", (Action<string, string>)File.AppendAllText),
@@ -156,7 +156,7 @@ namespace RajatPatwari.Vertex.Runtime
             return FindBySignature(package, function, @return, parameters);
         }
 
-        public static (bool returns, object? value) Execute(string qualifiedName, Datatype @return, IEnumerable<Datatype> parameters, params object?[] values) =>
+        public static (bool returns, object? value) Execute(string qualifiedName, Datatype @return, IEnumerable<Datatype> parameters, object?[] values) =>
             FindBySignature(qualifiedName ?? throw new ArgumentNullException(nameof(qualifiedName)), @return,
                 parameters ?? throw new ArgumentNullException(nameof(parameters)))?.RunRuntime(values ?? throw new ArgumentNullException(nameof(values)))
                 ?? throw new InvalidOperationException(nameof(qualifiedName));
