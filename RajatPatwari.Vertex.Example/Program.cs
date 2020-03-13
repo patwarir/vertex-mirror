@@ -28,6 +28,9 @@ namespace RajatPatwari.Vertex.Example
             main.Buffer.WriteOperationCode(OperationCode.Call);
             main.Buffer.WriteFunction("std.sio:writeln", new List<Datatype> { Datatype.String }, Datatype.Void);
 
+            main.Buffer.WriteOperationCode(OperationCode.Call);
+            main.Buffer.WriteFunction("func_1", Function.NoParameters, Datatype.Void);
+
             main.Buffer.WriteOperationCode(OperationCode.Return);
 
             package.Functions.Add(main);
@@ -42,6 +45,26 @@ namespace RajatPatwari.Vertex.Example
             func0.Buffer.WriteOperationCode(OperationCode.Return);
 
             package.Functions.Add(func0);
+
+            var func1 = new Function("func_1", (Scalar)Datatype.Void);
+
+            func1.Constants.Append((Scalar)"This was your input: ");
+
+            func1.Buffer.WriteOperationCode(OperationCode.LoadConstant);
+            func1.Buffer.Write(0);
+
+            func1.Buffer.WriteOperationCode(OperationCode.Call);
+            func1.Buffer.WriteFunction("std.sio:readln", Function.NoParameters, Datatype.String);
+
+            func1.Buffer.WriteOperationCode(OperationCode.Call);
+            func1.Buffer.WriteFunction("std.sfn:cat", new List<Datatype>() { Datatype.String, Datatype.String }, Datatype.String);
+
+            func1.Buffer.WriteOperationCode(OperationCode.Call);
+            func1.Buffer.WriteFunction("std.sio:writeln", new List<Datatype> { Datatype.String }, Datatype.Void);
+
+            func1.Buffer.WriteOperationCode(OperationCode.Return);
+
+            package.Functions.Add(func1);
 
             var interpreter = new Interpreter(package);
             interpreter.Run();

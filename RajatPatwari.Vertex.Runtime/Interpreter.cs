@@ -45,10 +45,10 @@ namespace RajatPatwari.Vertex.Runtime
                         if (@return.returns)
                             function.Stack.Push(@return.value switch
                             {
-                                bool a => (Scalar)a,
-                                long b => (Scalar)b,
-                                double c => (Scalar)c,
-                                string d => (Scalar)d,
+                                bool value => (Scalar)value,
+                                long value => (Scalar)value,
+                                double value => (Scalar)value,
+                                string value => (Scalar)value,
                                 _ => throw new InvalidOperationException(nameof(@return))
                             });
                     }
