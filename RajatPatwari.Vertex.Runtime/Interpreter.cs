@@ -18,14 +18,14 @@ namespace RajatPatwari.Vertex.Runtime
                 var operationCode = function.Buffer.ReadOperationCode(position++);
 
                 if (operationCode == OperationCode.NoOperation)
-                { }
+                    continue;
 
                 else if (operationCode == OperationCode.JumpAlways)
                     position = function.GetLabelPosition(function.Buffer.ReadString(position));
                 else if (operationCode == OperationCode.JumpTrue || operationCode == OperationCode.JumpFalse)
                 {
                     var name = function.Buffer.ReadString(position);
-                    var pop = (bool)(function.Stack.Pop().Value ?? throw new InvalidOperationException(nameof(Interpreter)));
+                    var pop = (bool)(function.Stack.Pop().Value ?? throw new InvalidOperationException(nameof(function.Stack)));
                     if (operationCode == OperationCode.JumpTrue && pop || operationCode == OperationCode.JumpFalse && !pop)
                         position = function.GetLabelPosition(name);
                     else
@@ -119,7 +119,7 @@ namespace RajatPatwari.Vertex.Runtime
                     var index = function.Buffer.Read(position++);
                     function.Stack.Push(operationCode switch
                     {
-                        OperationCode.LoadGlobal => _package.Globals.Get(index),
+                        OperationCode.LoadGlobal => _package.Globals?.Get(index) ?? throw new InvalidOperationException(nameof(_package.Globals)),
                         OperationCode.LoadParameter => function.Parameters.Get(index),
                         OperationCode.LoadConstant => function.Constants.Get(index),
                         OperationCode.LoadLocal => function.Locals.Get(index),
@@ -147,6 +147,7 @@ namespace RajatPatwari.Vertex.Runtime
         }
 
         public void Run() =>
-            RunFunction(_package.FindBySignature("main", Datatype.Void, Function.NoParameters));
+            RunFunction(_package.FindBySignature("main", Datatype.Void, Function.NoParameters)
+                ?? throw new InvalidOperationException("No main!"));
     }
 }

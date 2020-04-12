@@ -454,7 +454,7 @@ namespace RajatPatwari.Vertex.Runtime.VirtualMachine
             var list = new List<object>();
             while (stack.Count > 0 && numberParameters > 0)
             {
-                list.Insert(0, stack.Pop().Value);
+                list.Insert(0, stack.Pop().Value ?? throw new InvalidOperationException(nameof(stack)));
                 numberParameters--;
             }
             return list.ToArray();
