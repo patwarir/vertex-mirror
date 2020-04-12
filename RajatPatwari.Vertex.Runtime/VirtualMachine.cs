@@ -449,17 +449,6 @@ namespace RajatPatwari.Vertex.Runtime.VirtualMachine
             return (qualifiedName.Remove(qualifiedName.IndexOf(':')), qualifiedName.Substring(qualifiedName.IndexOf(':') + 1));
         }
 
-        public static object[] Flatten(Stack<Scalar> stack, int numberParameters)
-        {
-            var list = new List<object>();
-            while (stack.Count > 0 && numberParameters > 0)
-            {
-                list.Insert(0, stack.Pop().Value ?? throw new InvalidOperationException(nameof(stack)));
-                numberParameters--;
-            }
-            return list.ToArray();
-        }
-
         public int GetLabelPosition(string labelName) =>
             Labels.Single(label => label.Name == labelName).Position;
 
@@ -481,6 +470,17 @@ namespace RajatPatwari.Vertex.Runtime.VirtualMachine
                 "String" => Datatype.String,
                 _ => throw new ArgumentException(nameof(type))
             };
+
+        internal static object[] Flatten(Stack<Scalar> stack, int numberParameters)
+        {
+            var list = new List<object>();
+            while (stack.Count > 0 && numberParameters > 0)
+            {
+                list.Insert(0, stack.Pop().Value ?? throw new InvalidOperationException(nameof(stack)));
+                numberParameters--;
+            }
+            return list.ToArray();
+        }
 
         internal static Function MakeRuntimeFunction(string name, Delegate @delegate)
         {
@@ -557,6 +557,19 @@ namespace RajatPatwari.Vertex.Runtime.VirtualMachine
             : this(name, false)
         { }
 
+        internal static Package MakeRuntimePackage(string name, (string name, Delegate @delegate)[] functions)
+        {
+            if (name == null)
+                throw new ArgumentNullException(nameof(name));
+            if (functions == null)
+                throw new ArgumentNullException(nameof(functions));
+
+            var package = new Package($"std.{name}", true);
+            foreach (var (functionName, @delegate) in functions)
+                package.Functions.Add(Function.MakeRuntimeFunction(functionName, @delegate));
+            return package;
+        }
+
         internal Function? FindBySignature(string name, bool isRuntime, Datatype @return, IEnumerable<Datatype> parameters)
         {
             if (name == null)
@@ -570,19 +583,6 @@ namespace RajatPatwari.Vertex.Runtime.VirtualMachine
                     return function;
 
             return null;
-        }
-
-        internal static Package MakeRuntimePackage(string name, (string name, Delegate @delegate)[] functions)
-        {
-            if (name == null)
-                throw new ArgumentNullException(nameof(name));
-            if (functions == null)
-                throw new ArgumentNullException(nameof(functions));
-
-            var package = new Package($"std.{name}", true);
-            foreach (var (functionName, @delegate) in functions)
-                package.Functions.Add(Function.MakeRuntimeFunction(functionName, @delegate));
-            return package;
         }
 
         public Function? FindBySignature(string name, Datatype @return, IEnumerable<Datatype> parameters) =>

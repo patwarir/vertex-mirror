@@ -91,8 +91,8 @@ namespace RajatPatwari.Vertex.Runtime
             packages.Add(Package.MakeRuntimePackage("sfn", new (string, Delegate)[]
             {
                 ("len", (Func<string, long>)(value => value.Length)),
-                ("char", (Func<string, long, string>)((value, index) => value[(int)index].ToString())),
-                ("is_emp", (Func<string, bool>)string.IsNullOrWhiteSpace),
+                ("chr", (Func<string, long, string>)((value, index) => value[(int)index].ToString())),
+                ("emp", (Func<string, bool>)string.IsNullOrWhiteSpace),
                 ("cat", (Func<string, string, string>)string.Concat),
                 ("rep", (Func<string, long, string>)((value, times) => new string(value[0], (int)times))),
                 ("sub", (Func<string, long, string>)((value, index) => value.Substring((int)index))),
@@ -128,6 +128,7 @@ namespace RajatPatwari.Vertex.Runtime
             {
                 ("read", (Func<string, string>)File.ReadAllText),
                 ("write", (Action<string, string>)File.AppendAllText),
+                ("writeln", (Action<string, string>)((path, content) => File.AppendAllText(path, content + Environment.NewLine))),
                 ("dir_str", (Func<string>)(() => Path.DirectorySeparatorChar.ToString())),
                 ("cur_dir", (Func<string>)Directory.GetCurrentDirectory),
                 ("combine", (Func<string, string, string>)Path.Combine),

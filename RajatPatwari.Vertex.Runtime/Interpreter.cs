@@ -147,7 +147,6 @@ namespace RajatPatwari.Vertex.Runtime
         }
 
         public void Run() =>
-            RunFunction(_package.FindBySignature("main", Datatype.Void, Function.NoParameters)
-                ?? throw new InvalidOperationException("No main!"));
+            RunFunction(_package.FindBySignature("main", Datatype.Void, Function.NoParameters) ?? throw new InvalidOperationException("No main!"));
     }
 }
