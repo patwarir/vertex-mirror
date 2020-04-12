@@ -10,11 +10,11 @@ gl {
 
 # @dsc "The starting point of the program."
 fn main() -> vd {
+	nop // Does nothing.
+	
 	// The classic "Hello, World!" output.
 	ld.lt str "Hello, World!"
 	call std.sio:writeln(str) -> vd
-	
-	nop // Does nothing.
 	
 	call globals() -> vd
 	
