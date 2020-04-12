@@ -1,0 +1,23 @@
+nop
+
+jmp.a IDENTIFIER
+jmp.t IDENTIFIER
+jmp.f IDENTIFIER
+
+call IDENTIFIER(MULT_CM DATATYPE) -> DATATYPE
+ret
+
+pop
+clr
+dup
+rot
+
+ld.lt DATATYPE LITERAL
+
+ld.gl INDEX
+ld.pr INDEX
+ld.cn INDEX
+ld.lc INDEX
+
+st.pr INDEX
+st.lc INDEX

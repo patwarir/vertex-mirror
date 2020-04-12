@@ -1,0 +1,161 @@
+pkg rajat_patwari.test
+
+/*
+ * Globals in the program.
+ * Globals represent state that is shared between different functions.
+ */
+gl {
+	int 56
+}
+
+# @dsc "The starting point of the program."
+fn main() -> vd {
+	// The classic "Hello, World!" output.
+	ld.lt str "Hello, World!"
+	call std.sio:writeln(str) -> vd
+	
+	nop // Does nothing.
+	
+	call globals() -> vd
+	
+	ld.lt int 2
+	ld.lt int 4
+	ld.lt int 3
+	call add_mul(int, int, int) -> int
+	call std.cst:to_str(int) -> str
+	call std.sio:writeln(str) -> vd
+	
+	call variables() -> vd
+	
+	ld.lt int 7
+	ld.lt int 7
+	call ne(int, int) -> bl
+	call std.cst:to_str(bl) -> str
+	call std.sio:writeln(str) -> vd
+	
+	ld.lt bl true
+	call stack(bl) -> fl
+	pop
+	
+	call loops() -> vd
+	
+	clr
+	ret
+}
+
+fn globals() -> vd {
+	ld.gl 0
+	call std.cst:to_str(int) -> str
+	call std.sio:writeln(str) -> vd
+	
+	ret
+}
+
+# @dsc "Adds two values and multiplies by a third."
+# @ret "The result of the operation."
+# @pr 0 "The first addition parameter."
+# @pr 1 "The second addition parameter."
+# @pr 2 "The multiplication parameter."
+fn add_mul(int, int, int) -> int {
+	ld.pr 0
+	ld.pr 1
+	call std.opr:add(int, int) -> int
+	
+	ld.pr 2
+	call std.opr:mul(int, int) -> int
+	
+	ret
+}
+
+fn variables() -> vd {
+	lc {
+		fl
+		bl
+	}
+	
+	ld.lt int 0
+	call std.cst:to_bl(int) -> bl
+	st.lc 1
+	
+	ld.lt fl -42.5
+	st.lc 0
+	
+	ld.lc 0
+	call std.cst:to_str(fl) -> str
+	
+	ld.lc 1
+	call std.cst:to_str(bl) -> str
+	
+	call std.sfn:cat(str, str) -> str
+	call std.sio:writeln(str) -> vd
+	
+	ret
+}
+
+# @dsc "Finds if two integers are not equal."
+fn ne(int, int) -> bl {
+	ld.pr 0
+	ld.pr 1
+	call std.cmp:eq(int, int) -> bl
+	call std.opr:neg(bl) -> bl
+	ret
+}
+
+fn stack(bl) -> fl {
+	ld.lt str "true"
+	ld.pr 0
+	rot
+	call std.cst:to_bl(str) -> bl
+	call std.cmp:eq(bl, bl) -> bl
+	call std.cst:to_fl(bl) -> fl
+	
+	dup
+	call std.opr:neg(fl) -> fl
+	ld.lt fl 2
+	call std.opr:mod(fl, fl) -> fl
+	call std.cst:to_str(fl) -> str
+	call std.sio:writeln(str) -> vd
+	
+	ret
+}
+
+fn loops() -> vd {
+	cn {
+		fl 10
+	}
+	
+	lc {
+		fl
+	}
+	
+	ld.lt fl 0
+	st.lc 0
+	
+lb LOOP_CONDITIONAL
+	ld.lc 0
+	ld.cn 0
+	call std.cmp:ge(fl, fl) -> bl
+	jmp.t LOOP_DONE
+	
+lb LOOP_BODY
+	ld.lt str "#"
+	ld.lc 0
+	call std.cst:to_str(fl) -> str
+	call std.sfn:cat(str, str) -> str
+	call std.sio:writeln(str) -> vd
+	
+lb LOOP_UPDATE
+	/*
+	 * Increments the value of lc 0.
+	 * Equivalent to (lc 0)++ in C-based languages.
+	 */
+	ld.lc 0
+	ld.lt fl 1
+	call std.opr:add(fl, fl) -> fl
+	st.lc 0
+	
+	jmp.a LOOP_CONDITIONAL
+	
+lb LOOP_DONE
+	ret
+}

@@ -1,0 +1,5 @@
+vd ~ Void
+bl ~ Boolean
+int ~ Integer
+fl ~ Float
+str ~ String

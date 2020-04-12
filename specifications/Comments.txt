@@ -1,0 +1,12 @@
+Line:
+// ...
+
+Block:
+/*
+ * ...
+ */
+
+Documentation:
+# @dsc "..." ~ Description
+# @ret "..." ~ Return
+# @pr INDEX "..." ~ Parameter

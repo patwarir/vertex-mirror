@@ -1,0 +1,102 @@
+std.
+
+env:
+exit() -> vd
+pass() -> vd
+date() -> str
+time() -> str
+
+cst:
+to_bl(int) -> bl
+to_bl(fl) -> bl
+to_bl(str) -> bl
+to_int(bl) -> int
+to_int(fl) -> int
+to_int(str) -> int
+to_fl(bl) -> fl
+to_fl(int) -> fl
+to_fl(str) -> fl
+to_str(bl) -> str
+to_str(int) -> str
+to_str(fl) -> str
+
+opr:
+neg(bl) -> bl
+neg(int) -> int
+neg(fl) -> fl
+to_dec(str) -> int
+to_hex(int) -> str
+add(int, int) -> int
+add(fl, fl) -> fl
+sub(int, int) -> int
+sub(fl, fl) -> fl
+mul(int, int) -> int
+mul(fl, fl) -> fl
+div(int, int) -> int
+div(fl, fl) -> fl
+mod(int, int) -> int
+mod(fl, fl) -> fl
+pwb(int, int) -> fl
+pwb(fl, fl) -> fl
+rtb(int, int) -> fl
+rtb(fl, fl) -> fl
+lgb(int, int) -> fl
+lgb(fl, fl) -> fl
+
+cmp:
+eq(bl, bl) -> bl
+eq(int, int) -> bl
+eq(fl, fl) -> bl
+eq(str, str) -> bl
+gt(int, int) -> bl
+gt(fl, fl) -> bl
+lt(int, int) -> bl
+lt(fl, fl) -> bl
+ge(int, int) -> bl
+ge(fl, fl) -> bl
+le(int, int) -> bl
+le(fl, fl) -> bl
+
+sfn:
+len(str) -> int
+chr(str, int) -> str
+emp(str) -> bl
+cat(str, str) -> str
+rep(str, int) -> str
+sub(str, int) -> str
+sub(str, int, int) -> str
+rem(str, int) -> str
+rem(str, int, int) -> str
+
+mth:
+TODO
+
+err:
+inv_op() -> vd
+inv_op(str) -> vd
+arg(str) -> vd
+arg_range(str) -> vd
+
+sio:
+ln_str() -> str
+clear() -> vd
+read() -> vd
+readln() -> str
+write(str) -> vd
+writeln(str) -> vd
+
+fio:
+read(str) -> str
+write(str, str) -> vd
+writeln(str, str) -> vd
+dir_str() -> str
+cur_dir() -> str
+combine(str, str) -> str
+exists(str) -> bl
+dir_exists(str) -> bl
+path(str) -> str
+dir_path(str) -> str
+make(str) -> vd
+make_dir(str) -> vd
+delete(str) -> vd
+delete_dir(str) -> vd
