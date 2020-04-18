@@ -70,9 +70,6 @@ namespace RajatPatwari.Vertex.Runtime.VirtualMachine
 
         public void Undefine()
         {
-            /*if (!IsDefined)
-                throw new InvalidOperationException($"!{nameof(IsDefined)}");*/
-
             _isDefined = false;
             _value = null;
         }
@@ -586,8 +583,7 @@ namespace RajatPatwari.Vertex.Runtime.VirtualMachine
         }
 
         public Function? FindBySignature(string name, Datatype @return, IEnumerable<Datatype> parameters) =>
-            FindBySignature(name ?? throw new ArgumentNullException(nameof(name)), false, @return,
-                parameters ?? throw new ArgumentNullException(nameof(parameters)));
+            FindBySignature(name ?? throw new ArgumentNullException(nameof(name)), false, @return, parameters ?? throw new ArgumentNullException(nameof(parameters)));
 
         public override string ToString() =>
             $"{Name}|{Functions.Count}";

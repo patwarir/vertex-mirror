@@ -23,18 +23,15 @@ namespace RajatPatwari.Vertex.Runtime
             {
                 ("to_bl", (Func<long, bool>)(value => value switch
                 {
-                    0L => false, 1L => true,
-                    _ => throw new ArgumentException(nameof(value))
+                    0L => false, 1L => true, _ => throw new ArgumentException(nameof(value))
                 })),
                 ("to_bl", (Func<double, bool>)(value => value switch
                 {
-                    0.0 => false, 1.0 => true,
-                    _ => throw new ArgumentException(nameof(value))
+                    0.0 => false, 1.0 => true, _ => throw new ArgumentException(nameof(value))
                 })),
                 ("to_bl", (Func<string, bool>)(value => value switch
                 {
-                    "false" => false, "true" => true,
-                    _ => throw new ArgumentException(nameof(value))
+                    "false" => false, "true" => true, _ => throw new ArgumentException(nameof(value))
                 })),
                 ("to_int", (Func<bool, long>)(value => value switch { false => 0L, true => 1L })),
                 ("to_int", (Func<double, long>)(value => (long)value)),

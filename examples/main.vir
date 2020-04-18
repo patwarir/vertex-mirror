@@ -6,6 +6,12 @@ pkg rajat_patwari.test
  */
 gl {
 	int 56
+	bl false
+	int -34
+	fl -7.42
+	str "Stuff"
+	fl +.34
+	bl true
 }
 
 # @dsc "The starting point of the program."
@@ -111,8 +117,8 @@ fn stack(bl) -> fl {
 	
 	dup
 	call std.opr:neg(fl) -> fl
-	ld.lt fl 2
-	call std.opr:mod(fl, fl) -> fl
+	ld.lt fl -2
+	call std.opr:div(fl, fl) -> fl
 	call std.cst:to_str(fl) -> str
 	call std.sio:writeln(str) -> vd
 	

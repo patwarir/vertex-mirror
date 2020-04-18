@@ -1,0 +1,7 @@
+pkg rajat_patwari.hello_world
+
+fn main() -> vd {
+	ld.lt str "Hello, World!"
+	call std.sio:writeln(str) -> vd
+	ret
+}

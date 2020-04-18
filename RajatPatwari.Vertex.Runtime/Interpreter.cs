@@ -7,8 +7,12 @@ namespace RajatPatwari.Vertex.Runtime
     {
         private readonly Package _package;
 
-        public Interpreter(Package package) =>
+        public Interpreter(Package package)
+        {
+            if (string.IsNullOrWhiteSpace(package.Name))
+                throw new InvalidOperationException(nameof(Package));
             _package = package;
+        }
 
         private void RunFunction(Function function)
         {
@@ -99,7 +103,7 @@ namespace RajatPatwari.Vertex.Runtime
                     {
                         Datatype.Boolean => (function.Buffer.ReadBoolean(position), 1),
                         Datatype.Integer => (function.Buffer.ReadInteger(position), 8),
-                        Datatype.Float => (function.Buffer.ReadInteger(position), 8),
+                        Datatype.Float => (function.Buffer.ReadFloat(position), 8),
                         Datatype.String => (function.Buffer.ReadString(position), 0),
                         _ => throw new InvalidOperationException()
                     };
