@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 
 namespace RajatPatwari.Vertex.Runtime
 {
@@ -62,11 +63,11 @@ namespace RajatPatwari.Vertex.Runtime
                 ("mod", (Func<long, long, long>)((value1, value2) => value1 % value2)),
                 ("mod", (Func<double, double, double>)((value1, value2) => value1 % value2)),
                 ("pwb", (Func<long, long, double>)((value1, value2) => Math.Pow(value1, value2))),
-                ("pwb", (Func<double, double, double>)((value1, value2) => Math.Pow(value1, value2))),
+                ("pwb", (Func<double, double, double>)Math.Pow),
                 ("rtb", (Func<long, long, double>)((value1, value2) => Math.Pow(value1, 1.0 / value2))),
                 ("rtb", (Func<double, double, double>)((value1, value2) => Math.Pow(value1, 1.0 / value2))),
                 ("lgb", (Func<long, long, double>)((value1, value2) => Math.Log(value1, value2))),
-                ("lgb", (Func<double, double, double>)((value1, value2) => Math.Log(value1, value2)))
+                ("lgb", (Func<double, double, double>)Math.Log)
             }));
 
             packages.Add(Package.MakeRuntimePackage("cmp", new (string, Delegate)[]
@@ -140,15 +141,10 @@ namespace RajatPatwari.Vertex.Runtime
             }));
         }
 
-        internal static Function? FindBySignature(string package, string function, Datatype @return, IEnumerable<Datatype> parameters)
-        {
-            foreach (var stdPackage in packages)
-                if (stdPackage.IsRuntime && stdPackage.Name == package)
-                    return stdPackage.FindBySignature(function, true, @return, parameters);
-            return null;
-        }
+        private static Function? FindBySignature(string package, string function, Datatype @return, IEnumerable<Datatype> parameters) =>
+            packages.FirstOrDefault(stdPackage => stdPackage.IsRuntime && stdPackage.Name == package).FindBySignature(function, true, @return, parameters);
 
-        internal static Function? FindBySignature(string qualifiedName, Datatype @return, IEnumerable<Datatype> parameters)
+        private static Function? FindBySignature(string qualifiedName, Datatype @return, IEnumerable<Datatype> parameters)
         {
             var (package, function) = Function.SplitQualifiedName(qualifiedName);
             return FindBySignature(package, function, @return, parameters);

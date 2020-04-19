@@ -17,10 +17,10 @@ namespace RajatPatwari.Vertex.Runtime
         public Parser(string code) =>
             _code = code;
 
-        private string TrimTab(string line) =>
+        private static string TrimTab(string line) =>
             line.Substring(line.LastIndexOf('\t') + 1);
 
-        private Datatype GetDatatype(string datatype) =>
+        private static Datatype GetDatatype(string datatype) =>
             datatype switch
             {
                 "vd" => Datatype.Void,
@@ -31,7 +31,7 @@ namespace RajatPatwari.Vertex.Runtime
                 _ => throw new ArgumentException(nameof(datatype))
             };
 
-        private Scalar GetValue(Datatype datatype, string value) =>
+        private static Scalar GetValue(Datatype datatype, string value) =>
             datatype switch
             {
                 Datatype.Boolean => (Scalar)bool.Parse(value),
@@ -41,7 +41,7 @@ namespace RajatPatwari.Vertex.Runtime
                 _ => throw new ArgumentException(nameof(value))
             };
 
-        private string GetStringLiteral(string @string) =>
+        private static string GetStringLiteral(string @string) =>
             @string[1..@string.LastIndexOf('"')];
 
         public void Run()
@@ -59,15 +59,12 @@ namespace RajatPatwari.Vertex.Runtime
 
                 else if (!inCommentBlock)
                 {
-                    if (line.StartsWith("//"))
-                        continue;
+                    if (line.StartsWith("//") || line == string.Empty)
+                    { }
                     else if (line.StartsWith("#"))
                     {
                         // TODO: Implement this.
-                        continue;
                     }
-                    else if (line == string.Empty)
-                        continue;
 
                     else if (line.StartsWith("pkg ") && _package == null)
                         _package = new Package(line.Substring(4));

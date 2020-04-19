@@ -214,12 +214,13 @@ namespace RajatPatwari.Vertex.Runtime.VirtualMachine
             position += 1 + name.Length;
 
             var parameters = ReadDatatypes(position);
-            position += 1 + parameters.Count();
+            var datatypes = parameters.ToList();
+            position += 1 + datatypes.Count;
 
             var @return = ReadDatatype(position++);
 
             var function = new Function(name, (Scalar)@return);
-            foreach (var datatype in parameters)
+            foreach (var datatype in datatypes)
                 function.Parameters.Append((Scalar)datatype);
             return function;
         }
@@ -251,8 +252,9 @@ namespace RajatPatwari.Vertex.Runtime.VirtualMachine
 
         public void WriteDatatypes(IEnumerable<Datatype> value)
         {
-            Write((byte)value.Count());
-            value.ToList().ForEach(WriteDatatype);
+            var datatypes = value.ToList();
+            Write((byte)datatypes.Count);
+            datatypes.ForEach(WriteDatatype);
         }
 
         public void WriteOperationCode(OperationCode value) =>
@@ -418,7 +420,7 @@ namespace RajatPatwari.Vertex.Runtime.VirtualMachine
             }
         }
 
-        internal Function(string name, Scalar @return, bool isRuntime)
+        private Function(string name, Scalar @return, bool isRuntime)
         {
             Name = name ?? throw new ArgumentNullException(nameof(name));
             _return = @return ?? throw new ArgumentNullException(nameof(@return));
@@ -457,7 +459,7 @@ namespace RajatPatwari.Vertex.Runtime.VirtualMachine
             _stack = new Stack<Scalar>();
         }
 
-        internal static Datatype GetDatatypeFromType(Type type) =>
+        private static Datatype GetDatatypeFromType(Type type) =>
             type?.Name switch
             {
                 "Void" => Datatype.Void,
@@ -542,7 +544,7 @@ namespace RajatPatwari.Vertex.Runtime.VirtualMachine
 
         public IList<Function> Functions { get; } = new List<Function>();
 
-        internal Package(string name, bool isRuntime)
+        private Package(string name, bool isRuntime)
         {
             Name = name ?? throw new ArgumentNullException(nameof(name));
             IsRuntime = isRuntime;

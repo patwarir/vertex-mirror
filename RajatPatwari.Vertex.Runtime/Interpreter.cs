@@ -16,13 +16,13 @@ namespace RajatPatwari.Vertex.Runtime
 
         private void RunFunction(Function function)
         {
-            int position = 0;
+            var position = 0;
             while (position < function.Buffer.Length)
             {
                 var operationCode = function.Buffer.ReadOperationCode(position++);
 
                 if (operationCode == OperationCode.NoOperation)
-                    continue;
+                { }
 
                 else if (operationCode == OperationCode.JumpAlways)
                     position = function.GetLabelPosition(function.Buffer.ReadString(position));
