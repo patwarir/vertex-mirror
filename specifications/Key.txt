@@ -2,7 +2,7 @@ IDENTIFIER ~ Starting letter alphabetic, rest underscore-colon-alphanumeric.
 DATATYPE ~ Datatype.
 LITERAL ~ Literal value.
 INDEX ~ Positive unsigned 8-bit integer.
-MULT_CM ~ Many of next token or grouping; separated by commas.
-MULT_NL ~ Many of next token or grouping; separated by newlines.
+MULT_CM ~ One or many of next token or grouping; separated by commas.
+MULT_NL ~ One or many of next token or grouping; separated by newlines.
 [] ~ Grouping definition syntax; not in final code.
 ... ~ Anything.

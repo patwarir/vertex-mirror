@@ -2,7 +2,7 @@ pkg rajat_patwari.test
 
 /*
  * Globals in the program.
- * Globals represent state that is shared between different functions.
+ * Globals represent values that are shared between different functions.
  */
 gl {
 	int 56

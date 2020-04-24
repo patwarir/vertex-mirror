@@ -1,23 +1,23 @@
-nop
+nop ~ Does nothing.
 
-jmp.a IDENTIFIER
-jmp.t IDENTIFIER
-jmp.f IDENTIFIER
+jmp.a IDENTIFIER ~ Jumps to the given identifier always.
+jmp.t IDENTIFIER ~ Pops a bl and jumps to the given identifier if true.
+jmp.f IDENTIFIER ~ Pops a bl and jumps to the given identifier if false.
 
-call IDENTIFIER(MULT_CM DATATYPE) -> DATATYPE
-ret
+call IDENTIFIER(MULT_CM DATATYPE) -> DATATYPE ~ Calls a given function.
+ret ~ Returns from a function.
 
-pop
-clr
-dup
-rot
+pop ~ Pops from the stack.
+clr ~ Clears the stack.
+dup ~ Duplicates the top value on the stack.
+rot ~ Rotates the top two values on the stack.
 
-ld.lt DATATYPE LITERAL
+ld.lt DATATYPE LITERAL ~ Loads a literal of the given datatype.
 
-ld.gl INDEX
-ld.pr INDEX
-ld.cn INDEX
-ld.lc INDEX
+ld.gl INDEX ~ Loads the given global.
+ld.pr INDEX ~ Loads the given parameter.
+ld.cn INDEX ~ Loads the given constant.
+ld.lc INDEX ~ Loads the given local.
 
-st.pr INDEX
-st.lc INDEX
+st.pr INDEX ~ Pops and sets the value of the given parameter.
+st.lc INDEX ~ Pops and sets the value of the given local.

@@ -1,5 +1,17 @@
 vd ~ Void
+No values.
+
 bl ~ Boolean
+Literal values:
+0) false
+1) true
+
 int ~ Integer
+Any signed 64-bit integer.
+
 fl ~ Float
+Any 64-bit float.
+
 str ~ String
+Any string of characters.
+Literal format: "..."
