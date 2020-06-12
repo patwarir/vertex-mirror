@@ -1,5 +1,6 @@
 ﻿using RajatPatwari.Vertex.Runtime.VirtualMachine;
 using System;
+using System.Linq;
 
 namespace RajatPatwari.Vertex.Runtime
 {
@@ -29,7 +30,7 @@ namespace RajatPatwari.Vertex.Runtime
                 else if (operationCode == OperationCode.JumpTrue || operationCode == OperationCode.JumpFalse)
                 {
                     var name = function.Buffer.ReadString(position);
-                    var pop = (bool)(function.Stack.Pop().Value ?? throw new InvalidOperationException(nameof(function.Stack)));
+                    var pop = (bool)function.Stack.Pop().Value;
                     if (operationCode == OperationCode.JumpTrue && pop || operationCode == OperationCode.JumpFalse && !pop)
                         position = function.GetLabelPosition(name);
                     else
@@ -44,7 +45,7 @@ namespace RajatPatwari.Vertex.Runtime
                     if (newFunction.Name.StartsWith("std.") && newFunction.Name.Contains(':'))
                     {
                         var @return = StandardLibrary.Execute(newFunction.Name, newFunction.Return.Datatype, newFunction.Parameters.GetDatatypes(),
-                            Function.Flatten(function.Stack, newFunction.Parameters.Count));
+                            Function.Flatten(function.Stack, newFunction.Parameters.Count).ToArray());
 
                         if (@return.returns)
                             function.Stack.Push(@return.value switch
@@ -57,10 +58,7 @@ namespace RajatPatwari.Vertex.Runtime
                             });
                     }
                     else if (newFunction.Name.Contains(':'))
-                    {
-                        // TODO: Implement this.
-                        throw new NotImplementedException();
-                    }
+                        throw new NotImplementedException(); // TODO: Implement this.
                     else
                     {
                         var @new = _package.FindBySignature(newFunction.Name, newFunction.Return.Datatype, newFunction.Parameters.GetDatatypes())
@@ -137,14 +135,9 @@ namespace RajatPatwari.Vertex.Runtime
                     var pop = function.Stack.Pop();
                     switch (operationCode)
                     {
-                        case OperationCode.SetParameter:
-                            function.Parameters.Update(index, pop);
-                            break;
-                        case OperationCode.SetLocal:
-                            function.Locals.Update(index, pop);
-                            break;
-                        default:
-                            throw new InvalidOperationException(nameof(operationCode));
+                        case OperationCode.SetParameter: function.Parameters.Update(index, pop); break;
+                        case OperationCode.SetLocal: function.Locals.Update(index, pop); break;
+                        default: throw new InvalidOperationException(nameof(operationCode));
                     }
                 }
             }

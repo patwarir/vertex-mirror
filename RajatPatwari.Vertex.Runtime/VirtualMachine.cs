@@ -24,8 +24,8 @@ namespace RajatPatwari.Vertex.Runtime.VirtualMachine
         public bool IsDefined =>
             _isDefined && _value != null;
 
-        public object? Value =>
-            IsDefined ? _value : throw new InvalidOperationException($"!{nameof(IsDefined)}");
+        public object Value =>
+            _isDefined && _value != null ? _value : throw new InvalidOperationException($"!{nameof(IsDefined)}");
 
         public Datatype Datatype { get; }
 
@@ -114,6 +114,9 @@ namespace RajatPatwari.Vertex.Runtime.VirtualMachine
         public void Prepend(Scalar value) =>
             _scalars.Insert(0, value ?? throw new ArgumentNullException(nameof(value)));
 
+        public void Insert(int index, Scalar value) =>
+            _scalars.Insert(index, value ?? throw new ArgumentNullException(nameof(value)));
+
         public void Update(int index, Scalar value)
         {
             if (IsConstant)
@@ -142,7 +145,7 @@ namespace RajatPatwari.Vertex.Runtime.VirtualMachine
         public IEnumerable<Datatype> GetDatatypes() =>
             _scalars.Select(scalar => scalar.Datatype);
 
-        public IEnumerable<object?> GetValues() =>
+        public IEnumerable<object> GetValues() =>
             _scalars.Select(scalar => scalar.Value);
 
         public override string ToString() =>
@@ -252,6 +255,9 @@ namespace RajatPatwari.Vertex.Runtime.VirtualMachine
 
         public void WriteDatatypes(IEnumerable<Datatype> value)
         {
+            if (value == null)
+                throw new ArgumentNullException(nameof(value));
+
             var datatypes = value.ToList();
             Write((byte)datatypes.Count);
             datatypes.ForEach(WriteDatatype);
@@ -260,15 +266,23 @@ namespace RajatPatwari.Vertex.Runtime.VirtualMachine
         public void WriteOperationCode(OperationCode value) =>
             Write((byte)value);
 
-        public void WriteFunction(Function function)
+        public void WriteFunction(Function value)
         {
-            WriteString(function.Name);
-            WriteDatatypes(function.Parameters.GetDatatypes());
-            WriteDatatype(function.Return.Datatype);
+            if (value == null)
+                throw new ArgumentNullException(nameof(value));
+
+            WriteString(value.Name);
+            WriteDatatypes(value.Parameters.GetDatatypes());
+            WriteDatatype(value.Return.Datatype);
         }
 
         public void WriteFunction(string name, IEnumerable<Datatype> parameters, Datatype @return)
         {
+            if (name == null)
+                throw new ArgumentNullException(nameof(name));
+            if (parameters == null)
+                throw new ArgumentNullException(nameof(parameters));
+
             WriteString(name);
             WriteDatatypes(parameters);
             WriteDatatype(@return);
@@ -285,6 +299,9 @@ namespace RajatPatwari.Vertex.Runtime.VirtualMachine
 
         public void WriteString(string value)
         {
+            if (value == null)
+                throw new ArgumentNullException(nameof(value));
+
             Write((byte)value.Length);
             value.ToList().ForEach(character => Write((byte)character));
         }
@@ -307,7 +324,7 @@ namespace RajatPatwari.Vertex.Runtime.VirtualMachine
 
         public Label(string name, int position)
         {
-            Name = name;
+            Name = name ?? throw new ArgumentNullException(nameof(name));
             Position = position;
         }
 
@@ -448,8 +465,13 @@ namespace RajatPatwari.Vertex.Runtime.VirtualMachine
             return (qualifiedName.Remove(qualifiedName.IndexOf(':')), qualifiedName.Substring(qualifiedName.IndexOf(':') + 1));
         }
 
-        public int GetLabelPosition(string labelName) =>
-            Labels.Single(label => label.Name == labelName).Position;
+        public int GetLabelPosition(string labelName)
+        {
+            if (labelName == null)
+                throw new ArgumentNullException(nameof(labelName));
+
+            return Labels.Single(label => label.Name == labelName).Position;
+        }
 
         public void Reset()
         {
@@ -462,23 +484,26 @@ namespace RajatPatwari.Vertex.Runtime.VirtualMachine
         private static Datatype GetDatatypeFromType(Type type) =>
             type?.Name switch
             {
-                "Void" => Datatype.Void,
-                "Boolean" => Datatype.Boolean,
-                "Int64" => Datatype.Integer,
-                "Double" => Datatype.Float,
-                "String" => Datatype.String,
+                nameof(Void) => Datatype.Void,
+                nameof(Boolean) => Datatype.Boolean,
+                nameof(Int64) => Datatype.Integer,
+                nameof(Double) => Datatype.Float,
+                nameof(String) => Datatype.String,
                 _ => throw new ArgumentException(nameof(type))
             };
 
-        internal static object[] Flatten(Stack<Scalar> stack, int numberParameters)
+        internal static IEnumerable<object> Flatten(Stack<Scalar> stack, int numberParameters)
         {
+            if (stack == null)
+                throw new ArgumentNullException(nameof(stack));
+
             var list = new List<object>();
             while (stack.Count > 0 && numberParameters > 0)
             {
-                list.Insert(0, stack.Pop().Value ?? throw new InvalidOperationException(nameof(stack)));
+                list.Insert(0, stack.Pop().Value);
                 numberParameters--;
             }
-            return list.ToArray();
+            return list;
         }
 
         internal static Function MakeRuntimeFunction(string name, Delegate @delegate)

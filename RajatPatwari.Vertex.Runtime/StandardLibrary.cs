@@ -1,6 +1,7 @@
 ﻿using RajatPatwari.Vertex.Runtime.VirtualMachine;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 
@@ -42,7 +43,7 @@ namespace RajatPatwari.Vertex.Runtime
                 ("to_fl", (Func<string, double>)double.Parse),
                 ("to_str", (Func<bool, string>)(value => value.ToString().ToLower())),
                 ("to_str", (Func<long, string>)(value => value.ToString())),
-                ("to_str", (Func<double, string>)(value => value.ToString()))
+                ("to_str", (Func<double, string>)(value => value.ToString(CultureInfo.InvariantCulture)))
             }));
 
             packages.Add(Package.MakeRuntimePackage("opr", new (string, Delegate)[]
@@ -50,7 +51,7 @@ namespace RajatPatwari.Vertex.Runtime
                 ("neg", (Func<bool, bool>)(value => !value)),
                 ("neg", (Func<long, long>)(value => -value)),
                 ("neg", (Func<double, double>)(value => -value)),
-                ("to_dec", (Func<string, long>)(value => long.Parse(value, System.Globalization.NumberStyles.HexNumber))),
+                ("to_dec", (Func<string, long>)(value => long.Parse(value, NumberStyles.HexNumber))),
                 ("to_hex", (Func<long, string>)(value => value.ToString("X"))),
                 ("add", (Func<long, long, long>)((value1, value2) => value1 + value2)),
                 ("add", (Func<double, double, double>)((value1, value2) => value1 + value2)),
@@ -100,9 +101,7 @@ namespace RajatPatwari.Vertex.Runtime
             }));
 
             packages.Add(Package.MakeRuntimePackage("mth", new (string, Delegate)[]
-            {
-                // TODO: Add in the functions for the math package.
-            }));
+            { })); // TODO: Add in the functions for the math package.
 
             packages.Add(Package.MakeRuntimePackage("err", new (string, Delegate)[]
             {

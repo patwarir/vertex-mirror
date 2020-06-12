@@ -31,6 +31,9 @@ namespace RajatPatwari.Vertex.Runtime
                 _ => throw new ArgumentException(nameof(datatype))
             };
 
+        private static string GetStringLiteral(string @string) =>
+            @string[1..@string.LastIndexOf('"')];
+
         private static Scalar GetValue(Datatype datatype, string value) =>
             datatype switch
             {
@@ -41,30 +44,26 @@ namespace RajatPatwari.Vertex.Runtime
                 _ => throw new ArgumentException(nameof(value))
             };
 
-        private static string GetStringLiteral(string @string) =>
-            @string[1..@string.LastIndexOf('"')];
-
         public void Run()
         {
             Function? current = null;
             bool inGlobalBlock = false, inConstantBlock = false, inLocalBlock = false, inCommentBlock = false;
 
-            foreach (var line in _code.Split(Environment.NewLine, StringSplitOptions.RemoveEmptyEntries).Select(TrimTab)
-                .Where(line => !string.IsNullOrWhiteSpace(line)))
+            foreach (var line in _code.Split(Environment.NewLine, StringSplitOptions.RemoveEmptyEntries).Select(TrimTab))
             {
-                if (line.StartsWith("/*"))
+                if (string.IsNullOrWhiteSpace(line))
+                { }
+                else if (line.StartsWith("/*"))
                     inCommentBlock = true;
                 else if (line.Contains("*/") && inCommentBlock)
                     inCommentBlock = false;
 
                 else if (!inCommentBlock)
                 {
-                    if (line.StartsWith("//") || line == string.Empty)
+                    if (line.StartsWith("//"))
                     { }
                     else if (line.StartsWith("#"))
-                    {
-                        // TODO: Implement this.
-                    }
+                    { } // TODO: Implement this.
 
                     else if (line.StartsWith("pkg ") && _package == null)
                         _package = new Package(line.Substring(4));
@@ -82,7 +81,8 @@ namespace RajatPatwari.Vertex.Runtime
                     else if (line.StartsWith("fn "))
                     {
                         current = new Function(line[3..line.IndexOf('(')],
-                            (Scalar)GetDatatype(line.Substring(line.LastIndexOf("->") + 3, line.LastIndexOf('{') - line.LastIndexOf("->") - 4)));
+                            (Scalar)GetDatatype(line.Substring(line.LastIndexOf("->", StringComparison.Ordinal) + 3,
+                                line.LastIndexOf('{') - line.LastIndexOf("->", StringComparison.Ordinal) - 4)));
 
                         var listParameters = line.Substring(line.IndexOf('(') + 1, line.LastIndexOf(')') - line.IndexOf('(') - 1);
                         foreach (var parameter in listParameters.Split(',', StringSplitOptions.RemoveEmptyEntries).Select(parameter => parameter.Trim()))
@@ -143,7 +143,8 @@ namespace RajatPatwari.Vertex.Runtime
                         foreach (var datatype in listParameters.Split(", ", StringSplitOptions.RemoveEmptyEntries))
                             datatypes.Add(GetDatatype(datatype));
 
-                        current?.Buffer.WriteFunction(line[5..line.IndexOf('(')], datatypes, GetDatatype(line[(line.LastIndexOf("->") + 3)..]));
+                        current?.Buffer.WriteFunction(line[5..line.IndexOf('(')], datatypes,
+                            GetDatatype(line[(line.LastIndexOf("->", StringComparison.Ordinal) + 3)..]));
                     }
                     else if (line.StartsWith("ret"))
                         current?.Buffer.WriteOperationCode(OperationCode.Return);
