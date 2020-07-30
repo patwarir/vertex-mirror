@@ -1,3 +1,6 @@
+# Release Notes for `v2.5.0`
+* TODO
+
 # Release Notes for `v2.0.1`
 * No changes to the runtime.
 * Many specifications/language documentation improvements.
