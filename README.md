@@ -1,12 +1,14 @@
 # RajatPatwari.Vertex
 A new high-level stack-based assembly-like programming language interpreted by .NET Core.
 
-### Version 2.0
-Vertex `v2.0.1` was just released! Check Releases or `CHANGELOG.md` for more information.
+## Requirements
+* Windows (`7 SP1+`, `8(.1)+`, `10+`) or macOS (`10.13+`)
+* `x86_64` processor
+> Linux OS and ARM64 processor releases are planned.
 
-### Notes
-__Framework:__ .NET Core 3.1
+## Notes
+**Framework:** .NET Core 3.1
 
-__Author:__ Rajat Patwari
+**Author:** Rajat Patwari
 
-__License:__ BSD 3-Clause
+**License:** BSD 3-Clause

@@ -1,8 +1,0 @@
-Add to the Standard Library:
-	Implement the "mth" package for mathematical functions.
-	Add bitwise operations to the "opr" package.
-	Add a "not_imp" exception for NotImplemented.
-
-Implement support for including ("inc") other user-defined packages.
-
-Implement documentation comment support.

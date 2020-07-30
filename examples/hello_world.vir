@@ -1,14 +1,10 @@
-// Every Vertex file begins with a unique package declaration.
-pkg rajat_patwari.hello_world
+pkg rajat_patwari.examples.hello_world;
 
-// Every Vertex program starts off with a main function
-// which has no parameters and returns void.
-fn main() -> vd {
-	// Loads the literal str "Hello, World!".
-	ld.lt str "Hello, World!"
-	// Calls the writeln(str) function defined in the std.sio package.
-	// This outputs the str previously loaded to standard Console output.
-	call std.sio:writeln(str) -> vd
-	// Returns from the function.
-	ret
+use std.sio;
+
+pub fn main() -> vd {
+    ld.lt str "Hello, World!";
+    call std.sio:writeln(str) -> vd;
+
+    ret;
 }
