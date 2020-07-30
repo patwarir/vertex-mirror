@@ -28,6 +28,11 @@
 nop;
 ```
 
+**Example(s):**
+```
+nop;
+```
+
 **Stack:** N/A
 
 **Position:** Next
@@ -42,6 +47,11 @@ nop;
 jmp.a {0};
 ```
 - `{0}` = Label identifier
+
+**Example(s):**
+```
+jmp.a LOOP_BEGIN;
+```
 
 **Stack:** N/A
 
@@ -58,6 +68,11 @@ jmp.f {0};
 ```
 - `{0}` = Label identifier
 
+**Example(s):**
+```
+jmp.f LOOP_END;
+```
+
 **Stack:** Pop 1
 
 **Position:** If the value on top of the stack is `false`, jumps to the given label, else next.
@@ -73,6 +88,66 @@ jmp.t {0};
 ```
 - `{0}` = Label identifier
 
+**Example(s):**
+```
+jmp.t LOOP_END;
+```
+
 **Stack:** Pop 1
 
 **Position:** If the value on top of the stack is `true`, jumps to the given label, else next.
+
+## `call` (Call)
+**Buffer Value:** `0x4`
+
+**Summary:** Calls the given function. Pops and pushes values onto the stack as given by the function signature.
+
+**Layout and Parameters:**
+```
+call {0}:{1}({2}) -> {3};
+```
+- `{0}` = Package identifier (*optional*)
+- `{1}` = Function identifier
+- `{2}` = Parameter types (*optional*)
+- `{3}` = Return type
+
+**Example(s):**
+```
+// Stack: Pop 4, Push 1
+call another_package.inner:advanced_function(bl, int, fl, str) -> str;
+
+// Stack: Pop 2, Push 1
+call std.opr.bit:shl(int, int) -> int;
+
+// Stack: Pop 1
+call std.sio:writeln(str) -> vd;
+
+// Stack: Push 1
+call std.env:date() -> str;
+
+// Stack: N/A
+call my_simple_function() -> vd;
+```
+
+**Stack:** Pops and pushes as given by the function signature.
+
+**Position:** Calls the given function.
+
+## `ret` (Return)
+**Buffer Value:** `0x5`
+
+**Summary:** Returns from the current function.
+
+**Layout and Parameters:**
+```
+ret;
+```
+
+**Example(s):**
+```
+ret;
+```
+
+**Stack:** Pop 1 if the return type of the function is not `vd`.
+
+**Position:** Returns from the current function. Exits the program if the current function is the entry-point.
