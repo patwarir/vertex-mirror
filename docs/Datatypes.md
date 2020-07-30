@@ -12,14 +12,14 @@
 
 **Literal Values:** N/A
 
-**Examples:** N/A
+**Example(s):** N/A
 
 ## `bl` (Boolean)
 **Buffer Value:** `0x1`
 
 **Literal Values:** `false`, `true`
 
-**Examples:**
+**Example(s):**
 - `false`
 - `true`
 
@@ -28,7 +28,7 @@
 
 **Literal Values:** Any 64-bit signed integer.
 
-**Examples:**
+**Example(s):**
 - `0`
 - `+1`
 - `23`
@@ -39,7 +39,7 @@
 
 **Literal Values:** Any 64-bit floating-point number.
 
-**Examples:**
+**Example(s):**
 - `0.0`
 - `7.563`
 - `+64.85`
@@ -50,7 +50,7 @@
 
 **Literal Values:** Any string of non-control ASCII characters surrounded by double quotes.
 
-**Examples:**
+**Example(s):**
 - `"a"`
 - `"Test_123"`
 - `"Hello, World!"`
