@@ -9,14 +9,13 @@
 - [`ret`](#ret-return)
 - [`pop`](#pop-stack-pop)
 - [`dup`](#dup-stack-duplicate)
-- [`rot`](#rot-stack-rotate)
-- [`flp`](#flp-stack-flip)
 - [`clr`](#clr-stack-clear)
 - [`ld.lt`](#ldlt-load-literal)
 - [`ld.gl`](#ldgl-load-global)
 - [`ld.pr`](#ldpr-load-parameter)
 - [`ld.lc`](#ldlc-load-local)
 - [`st.lc`](#stlc-set-local)
+- [`break`](#break-break)
 
 ## `nop` (No Operation)
 **Buffer Value:** `0x00`
