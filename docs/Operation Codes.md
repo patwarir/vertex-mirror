@@ -19,11 +19,11 @@
 - [`st.lc`](#stlc-set-local)
 
 ## `nop` (No Operation)
-**Buffer Value:** `0x0`
+**Buffer Value:** `0x00`
 
 **Summary:** Does nothing.
 
-**Layout and Parameters:**
+**Layout and Parameter(s):**
 ```
 nop;
 ```
@@ -38,11 +38,11 @@ nop;
 **Position:** Next
 
 ## `jmp.a` (Jump Always)
-**Buffer Value:** `0x1`
+**Buffer Value:** `0x01`
 
 **Summary:** Jumps to the given label always.
 
-**Layout and Parameters:**
+**Layout and Parameter(s):**
 ```
 jmp.a {0};
 ```
@@ -58,11 +58,11 @@ jmp.a LOOP_BEGIN;
 **Position:** Jumps to the given label.
 
 ## `jmp.f` (Jump False)
-**Buffer Value:** `0x2`
+**Buffer Value:** `0x02`
 
 **Summary:** Jumps to the given label when the value on top of the stack is `false`.
 
-**Layout and Parameters:**
+**Layout and Parameter(s):**
 ```
 jmp.f {0};
 ```
@@ -78,11 +78,11 @@ jmp.f LOOP_END;
 **Position:** If the value on top of the stack is `false`, jumps to the given label, else next.
 
 ## `jmp.t` (Jump True)
-**Buffer Value:** `0x3`
+**Buffer Value:** `0x03`
 
 **Summary:** Jumps to the given label when the value on top of the stack is `true`.
 
-**Layout and Parameters:**
+**Layout and Parameter(s):**
 ```
 jmp.t {0};
 ```
@@ -98,11 +98,11 @@ jmp.t LOOP_END;
 **Position:** If the value on top of the stack is `true`, jumps to the given label, else next.
 
 ## `call` (Call)
-**Buffer Value:** `0x4`
+**Buffer Value:** `0x04`
 
 **Summary:** Calls the given function. Pops and pushes values onto the stack as given by the function signature.
 
-**Layout and Parameters:**
+**Layout and Parameter(s):**
 ```
 call {0}:{1}({2}) -> {3};
 ```
@@ -134,11 +134,11 @@ call my_simple_function() -> vd;
 **Position:** Calls the given function.
 
 ## `ret` (Return)
-**Buffer Value:** `0x5`
+**Buffer Value:** `0x05`
 
 **Summary:** Returns from the current function.
 
-**Layout and Parameters:**
+**Layout and Parameter(s):**
 ```
 ret;
 ```
